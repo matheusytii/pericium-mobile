@@ -1,9 +1,9 @@
 import React from 'react';
 import { View, Text, Button, StyleSheet } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-import LoginScreen from './LoginScreen';
+import Login from './Login';
 
-export default function HomeScreen() {
+export default function Home() {
   const navigation = useNavigation();
 
   return (
