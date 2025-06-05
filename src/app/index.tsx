@@ -1,9 +1,5 @@
-import { View, Text } from "react-native";
+import { Redirect } from 'expo-router';
 
-export default function Home(){
-    return(
-        <View className="bg-red-800 h-full flex-1 justify-center items-center">
-            <Text className="text-white">Inferno</Text>
-        </View>
-    )
-}
+export default function Index() {
+  return <Redirect href="/login" />;
+} // ei allan aqui eu to redirecionando tlgd, tem que ter o index de toda forma, eu deixei o nome login so pra ficar facil de tu identificar
