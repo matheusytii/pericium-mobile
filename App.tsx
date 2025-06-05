@@ -1,7 +1,7 @@
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import LoginScreen from './src/app/login';
-import TesteScreen from './src/app/teste';
+import TesteScreen from './src/app/home';
 
 
 const Stack = createNativeStackNavigator();

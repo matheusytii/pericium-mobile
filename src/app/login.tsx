@@ -1,71 +1,110 @@
-import React, { useState } from 'react';
-import { View, Text, Pressable, TextInput, KeyboardAvoidingView, Platform, TouchableWithoutFeedback, Keyboard } from 'react-native';
-import { useRouter } from 'expo-router';
+import {
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
+} from "react-native";
 
-export default function LoginScreen() {
-  const router = useRouter();
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-
-  const handleLogin = () => {
-    
-    console.log('Login:', { email, password });
-    router.push('/teste');
-  };
-
+export default function Login() {
   return (
-    <KeyboardAvoidingView 
-      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-      className="flex-1 bg-periciumWhite"
-    >
-      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-        <View className="flex-1 px-8 justify-center">
-          
-          <View className="mb-12">
-            <Text className="text-4xl font-bold text-periciumBlack mb-2">
-              Bem-vindo
-            </Text>
-            <Text className="text-lg text-periciumGreenDark">
-              Faça login para continuar
-            </Text>
-          </View>
-
-          
-          <View className="space-y-4">
-            <View>
-              <Text className="text-periciumBlack mb-2 font-medium">Email</Text>
-              <TextInput
-                className="bg-white p-4 rounded-lg border border-periciumGreenLight/20"
-                placeholder="seu@email.com"
-                value={email}
-                onChangeText={setEmail}
-                keyboardType="email-address"
-                autoCapitalize="none"
-              />
-            </View>
-
-            <View>
-              <Text className="text-periciumBlack mb-2 font-medium">Senha</Text>
-              <TextInput
-                className="bg-white p-4 rounded-lg border border-periciumGreenLight/20"
-                placeholder="Sua senha"
-                value={password}
-                onChangeText={setPassword}
-                secureTextEntry
-              />
-            </View>
-
-            <Pressable 
-              className="bg-periciumGreen p-4 rounded-lg mt-6"
-              onPress={handleLogin}
-            >
-              <Text className="text-white text-center font-semibold text-lg">
-                Entrar
-              </Text>
-            </Pressable>
-          </View>
+    <View style={styles.fullScreen}>
+      <View style={styles.contentContainer}>
+        <Text style={styles.title}>Login</Text>
+        <Text style={styles.description}>Faça o login para poder</Text>
+        <Text style={styles.description}>acessar o sistema</Text>
+        <View style={styles.form}>
+          <Text style={styles.titleInput}>CPF</Text>
+          <TextInput
+            style={styles.input}
+            placeholder="Digite seu CPF"
+            placeholderTextColor="#000000"
+            keyboardType="numeric"
+          />
+          <Text style={styles.titleInput}>Senha</Text>
+          <TextInput
+            style={styles.input}
+            placeholder="Digite sua senha"
+            placeholderTextColor="#000000"
+          />
+          <TouchableOpacity style={styles.button}>
+            <Text style={styles.textButton}>Entrar</Text>
+          </TouchableOpacity>
+          <Text style={styles.text}>Esqueci a senha</Text>
         </View>
-      </TouchableWithoutFeedback>
-    </KeyboardAvoidingView>
+      </View>
+    </View>
   );
-} 
+}
+
+export const styles = StyleSheet.create({
+  fullScreen: {
+    backgroundColor: "#B6C0C7",
+    flex: 1,
+  },
+  contentContainer: {
+    marginTop: 250,
+    alignContent: "center",
+    justifyContent: "center",
+  },
+
+  title: {
+    textAlign: "center",
+    fontSize: 36,
+    fontWeight: "bold",
+    paddingBottom: 10,
+  },
+
+  description: {
+    textAlign: "center",
+    fontSize: 16,
+  },
+
+  form: {
+    marginTop: 20,
+
+    width: "100%",
+  },
+
+  input: {
+    backgroundColor: "#EFEFEF",
+    borderRadius: 5,
+    paddingLeft: 10,
+    height: 40,
+    marginLeft: 15,
+    marginRight: 15,
+    borderColor: "#000000",
+  },
+
+  titleInput: {
+    paddingLeft: 24,
+    paddingBottom: 5,
+    paddingTop: 10,
+    fontSize: 14,
+    fontWeight: "bold",
+    color: "#000000",
+  },
+
+  button: {
+    marginTop: 20,
+    marginLeft: 26,
+    marginRight: 26,
+    backgroundColor: "#15354B",
+    alignContent: "center",
+    justifyContent: "center",
+    height: 45,
+    borderRadius: 10,
+  },
+
+  textButton: {
+    textAlign: "center",
+    color: "#ffffff",
+    fontWeight: "bold",
+  },
+
+  text: {
+    textAlign: "center",
+    color: "#000000",
+    paddingTop: 14,
+  },
+});
