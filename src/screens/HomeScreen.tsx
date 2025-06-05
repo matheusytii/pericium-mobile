@@ -1,18 +1,14 @@
 import React from 'react';
 import { View, Text, Button, StyleSheet } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
-import LoginScreen from './LoginScreen';
+
+
 
 export default function HomeScreen() {
-  const navigation = useNavigation();
+
 
   return (
-    <View style={styles.container}>
-      <Text>Bem-vindo ao app!</Text>
+    <View className='bg-green-700 flex-1 justify-center items-center h-full w-full'>
+      <Text className='text-purple-400 text-lg'>EU QUERO GOZAR</Text>
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: { flex: 1, justifyContent: 'center', alignItems: 'center' },
-});
