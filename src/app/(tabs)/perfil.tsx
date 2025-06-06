@@ -6,9 +6,7 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import { RouteProp } from "@react-navigation/native";
-import { RootStackParamList } from "../navigation/type";
+
 import { Ionicons } from "@expo/vector-icons";
 
 export default function Perfil() {

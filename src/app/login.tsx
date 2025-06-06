@@ -1,11 +1,16 @@
+import React from "react";
 import {
+  StyleSheet,
   Text,
   TextInput,
   TouchableOpacity,
   View,
 } from "react-native";
+import { useRouter } from "expo-router";
+
 
 export default function Login() {
+  const router = useRouter()
   return (
     <View className="bg-periciumWhite flex-1 justify-center ">
       <View className="items-center justify-center">
@@ -26,7 +31,7 @@ export default function Login() {
             placeholder="Digite sua senha"
             secureTextEntry
             />
-          <TouchableOpacity className="mt-5 bg-periciumBlueDark rounded-lg mx-4 h-12 justify-center">
+          <TouchableOpacity className="mt-5 bg-periciumBlueDark rounded-lg mx-4 h-12 justify-center" onPress={() => router.push("/home")}>
             <Text className="text-center text-white font-bold">Entrar</Text>
           </TouchableOpacity>
           <Text className="text-center text-periciumBlack pt-4">Esqueci a senha</Text>
