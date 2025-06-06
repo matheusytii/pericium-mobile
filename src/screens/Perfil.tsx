@@ -9,42 +9,53 @@ import {
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { RouteProp } from "@react-navigation/native";
 import { RootStackParamList } from "../navigation/type";
-import { Ionicons } from "@expo/vector-icons"; 
+import { Ionicons } from "@expo/vector-icons";
 
-type Props = {
-  navigation: NativeStackNavigationProp<RootStackParamList, "Login">;
-  route: RouteProp<RootStackParamList, "Login">;
-};
-
-export default function Login({ navigation }: Props) {
+export default function Perfil() {
   const [passwordVisible, setPasswordVisible] = useState(false);
   const [password, setPassword] = useState("");
-
   return (
     <View style={styles.fullScreen}>
-      <View style={styles.contentContainer}>
-        <Text style={styles.title}>Login</Text>
-        <Text style={styles.description}>Faça o login para poder</Text>
-        <Text style={styles.description}>acessar o sistema</Text>
-        <View style={styles.form}>
+      <Text style={styles.title}>Perfil</Text>
+      <View style={styles.form}>
+        <View style={styles.inside}>
+          <Text style={styles.titleInput}>Nome Completo</Text>
+          <TextInput
+            style={styles.input}
+            placeholder="Nome Completo"
+            placeholderTextColor="#000000"
+          />
+          <Text style={styles.titleInput}>Cargo</Text>
+          <TextInput
+            style={styles.input}
+            placeholder="Admnistrador"
+            placeholderTextColor="#000000"
+          />
           <Text style={styles.titleInput}>CPF</Text>
           <TextInput
             style={styles.input}
-            placeholder="Digite seu CPF"
+            placeholder="123.456.789-01"
             placeholderTextColor="#000000"
-            keyboardType="numeric"
+          />
+          <Text style={styles.titleInput}>E-mail</Text>
+          <TextInput
+            style={styles.input}
+            placeholder="vitinhodabanana@gmail.com"
+            placeholderTextColor="#000000"
           />
           <Text style={styles.titleInput}>Senha</Text>
           <View style={styles.passwordContainer}>
             <TextInput
               style={[styles.input2, { flex: 1 }]}
-              placeholder="Digite sua senha"
+              placeholder="Senha"
               placeholderTextColor="#000000"
               secureTextEntry={!passwordVisible}
               onChangeText={setPassword}
               value={password}
             />
-            <TouchableOpacity onPress={() => setPasswordVisible(!passwordVisible)}>
+            <TouchableOpacity
+              onPress={() => setPasswordVisible(!passwordVisible)}
+            >
               <Ionicons
                 name={passwordVisible ? "eye-off" : "eye"}
                 size={24}
@@ -53,14 +64,11 @@ export default function Login({ navigation }: Props) {
               />
             </TouchableOpacity>
           </View>
-          <TouchableOpacity
-            style={styles.button}
-            onPress={() => navigation.navigate("Home")}
-          >
-            <Text style={styles.textButton}>Entrar</Text>
+          <TouchableOpacity style={styles.button}>
+            <Text style={styles.textButton}>Alterar a senha</Text>
           </TouchableOpacity>
-          <TouchableOpacity>
-            <Text style={styles.text}>Esqueci a senha</Text>
+          <TouchableOpacity style={styles.button2}>
+            <Text style={styles.textButton2}>Encerrar sessão</Text>
           </TouchableOpacity>
         </View>
       </View>
@@ -70,27 +78,29 @@ export default function Login({ navigation }: Props) {
 
 export const styles = StyleSheet.create({
   fullScreen: {
-    backgroundColor: "#B6C0C7",
-    flex: 1,
-  },
-  contentContainer: {
-    marginTop: 190,
+    backgroundColor: "#EFEFEF",
     alignContent: "center",
     justifyContent: "center",
   },
   title: {
-    textAlign: "center",
-    fontSize: 36,
+    textAlign: "justify",
+    fontSize: 26,
     fontWeight: "bold",
-    paddingBottom: 10,
-  },
-  description: {
-    textAlign: "center",
-    fontSize: 16,
+    marginLeft: 25,
+    marginTop: 20,
   },
   form: {
     marginTop: 20,
     width: "100%",
+    flex: 3 / 4,
+  },
+  inside: {
+    backgroundColor: "#B6C0C7",
+    height: 522,
+    width: 340,
+    marginLeft: 20,
+    marginRight: 20,
+    borderRadius: 10,
   },
   input: {
     backgroundColor: "#EFEFEF",
@@ -109,7 +119,7 @@ export const styles = StyleSheet.create({
     fontWeight: "bold",
     color: "#000000",
   },
-  input2:{
+  input2: {
     paddingLeft: 10,
   },
   passwordContainer: {
@@ -125,7 +135,19 @@ export const styles = StyleSheet.create({
     marginTop: 20,
     marginLeft: 26,
     marginRight: 26,
+    marginBottom: 5,
     backgroundColor: "#15354B",
+    alignContent: "center",
+    justifyContent: "center",
+    height: 45,
+    borderRadius: 10,
+  },
+  button2: {
+    marginTop: 5,
+    marginLeft: 26,
+    marginRight: 26,
+    marginBottom: 5,
+    backgroundColor: "#EFEFEF",
     alignContent: "center",
     justifyContent: "center",
     height: 45,
@@ -136,9 +158,10 @@ export const styles = StyleSheet.create({
     color: "#ffffff",
     fontWeight: "bold",
   },
-  text: {
+  textButton2: {
     textAlign: "center",
-    color: "#000000",
-    paddingTop: 14,
+    color: "#15354B",
+    fontWeight: "bold",
+    borderColor: "#15354B",
   },
 });
