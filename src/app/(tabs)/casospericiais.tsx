@@ -15,6 +15,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { parseJwt } from "../../types/parseJWT";
 import { CreateCaseDTO } from "../../interface/casoDTO";
 
+
 export default function CasosPericiais({ reloadKey }: { reloadKey: number }) {
   const [showNovo, setShowNovo] = useState(false);
   const [casos, setCasos] = useState<CreateCaseDTO[]>([]);
@@ -22,6 +23,7 @@ export default function CasosPericiais({ reloadKey }: { reloadKey: number }) {
     "mes" | "semana" | "dia"
   >("mes");
   const router = useRouter();
+
   const [loading, setLoading] = useState(true);
 
   const carregarCasos = async () => {
@@ -82,6 +84,7 @@ export default function CasosPericiais({ reloadKey }: { reloadKey: number }) {
     carregarCasos();
   }, [reloadKey]);
 
+
   return (
     <View className="flex-1 bg-white pt-12 px-4 relative">
       {/* Cabeçalho com logo fake */}
@@ -104,7 +107,7 @@ export default function CasosPericiais({ reloadKey }: { reloadKey: number }) {
         <TextInput
           placeholder="Buscar"
           placeholderTextColor="#333"
-          className="flex-1 text-sm text-black"
+          className="flex-1 text-base text-black"
         />
         <Ionicons name="search" size={18} color="#1B3A57" />
       </View>
@@ -122,6 +125,7 @@ export default function CasosPericiais({ reloadKey }: { reloadKey: number }) {
             }`}
           >
             <Text
+
               className={`text-sm font-semibold ${
                 periodoSelecionado === periodo ? "text-white" : "text-black"
               }`}
@@ -140,15 +144,16 @@ export default function CasosPericiais({ reloadKey }: { reloadKey: number }) {
         {casos.map((caso, index) => (
           <View
             key={index}
-            className="bg-[#D6DDE3] rounded-xl p-4 mb-4 relative"
+
+            className="bg-[#D6DDE3] rounded-xl p-4 mb-4 relative border border-[#929292]"
           >
-            <Text className="font-bold text-sm text-[#1B3A57]">
-              ID {caso._id}
+            <Text className="font-bold text-base">ID {caso.id}</Text>
+            <Text className="text-base">Data: {caso.data}</Text>
+            <Text className="text-base font-semibold">
+              Título: {caso.titulo}
             </Text>
-            <Text className="text-sm">Data: {caso.titulo}</Text>
-            <Text className="text-sm font-semibold">Título: {caso.titulo}</Text>
             <View className="flex-row items-center mt-1">
-              <Text className="text-sm font-medium">Status:</Text>
+              <Text className="text-base">Status:</Text>
               <Text className="ml-2 px-2 py-0.5 text-sm bg-white rounded">
                 {caso.status}
               </Text>
@@ -160,6 +165,7 @@ export default function CasosPericiais({ reloadKey }: { reloadKey: number }) {
               <Pressable onPress={() => confirmarDeleteCaso(caso._id || "")}>
                 <Ionicons name="trash-outline" size={20} color="#1B3A57" />
               </Pressable>
+
             </View>
           </View>
         ))}
@@ -170,6 +176,7 @@ export default function CasosPericiais({ reloadKey }: { reloadKey: number }) {
           className="bg-[#1B3A57] px-4 py-2 rounded-md absolute bottom-24 right-4 z-20"
           onPress={() => router.push("/novocaso")}
         >
+
           <Text className="text-white text-sm">Novo Caso</Text>
         </TouchableOpacity>
       )}

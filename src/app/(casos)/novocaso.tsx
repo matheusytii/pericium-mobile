@@ -116,6 +116,7 @@ export default function CreateCaseScreen() {
           className="bg-white rounded-md px-2 py-2 mt-1 h-24 text-top"
           placeholder="Escreva aqui"
           multiline
+          style={{ textAlignVertical: "top" }}
           numberOfLines={4}
           value={descricao}
           onChangeText={setDescricao}

@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+
 import { Text, TextInput, TouchableOpacity, View, Alert } from "react-native";
 import { useRouter } from "expo-router";
 import { useAuth } from "../context/AuthContext";
@@ -39,9 +40,14 @@ export default function Login() {
             CPF
           </Text>
 
+        <View className="w-full mt-5">
+          <Text className="pl-6 pb-1 pt-2 text-sm font-bold text-black">
+            CPF
+          </Text>
           <TextInput
-            className="bg-[#EFEFEF] rounded-md pl-3 h-10 ml-4 mr-4"
+            className="bg-gray-200 rounded px-3 h-10 mx-4 text-black"
             placeholder="Digite seu CPF"
+            placeholderTextColor="#000"
             keyboardType="numeric"
             value={cpf}
             onChangeText={setCpf}
