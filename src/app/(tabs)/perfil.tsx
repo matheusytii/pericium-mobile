@@ -6,12 +6,14 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-
+import { useAuth } from "../../context/AuthContext";
 import { Ionicons } from "@expo/vector-icons";
 
 export default function Perfil() {
   const [passwordVisible, setPasswordVisible] = useState(false);
   const [password, setPassword] = useState("");
+  const { logout } = useAuth()
+
   return (
     <View style={styles.fullScreen}>
       <Text style={styles.title}>Perfil</Text>
@@ -65,7 +67,7 @@ export default function Perfil() {
           <TouchableOpacity style={styles.button}>
             <Text style={styles.textButton}>Alterar a senha</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.button2}>
+          <TouchableOpacity style={styles.button2} onPress={logout}>
             <Text style={styles.textButton2}>Encerrar sessão</Text>
           </TouchableOpacity>
         </View>

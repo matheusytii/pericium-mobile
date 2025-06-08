@@ -1,18 +1,36 @@
-import React, { useState } from 'react';
-import { View, Text, TouchableOpacity, ScrollView } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
-import { useRouter } from 'expo-router';
-
+import React, { useState, useEffect } from "react";
+import { View, Text, TouchableOpacity, ScrollView } from "react-native";
+import { Ionicons } from "@expo/vector-icons";
+import { useRouter, useLocalSearchParams } from "expo-router";
+import { getIdCaso } from "../../service/casos";
+import { CreateCaseDTO } from "../../interface/casoDTO";
 export default function CaseScreen() {
+  const { id } = useLocalSearchParams();
+  const [caso, setCaso] = useState<CreateCaseDTO>();
   const [menuOpen, setMenuOpen] = useState(false);
   const router = useRouter();
 
+  useEffect(() => {
+    if (id) {
+      getIdCaso(id as string)
+        .then(setCaso)
+        .catch((err) => console.error("Erro ao buscar caso:", err));
+    }
+  }, [id]);
+
+  if (!caso) {
+    return (
+      <View className="flex-1 justify-center items-center">
+        <Text>Carregando caso...</Text>
+      </View>
+    );
+  }
   const menuOptions = [
-    { label: 'Relatório', path: '/relatorio' },
-    { label: 'Editar Caso', path: '/editar' },
-    { label: 'Atribuir Funcionário', path: '/atribuir-funcionario' },
-    { label: 'Vítima', path: '/vitima' },
-    { label: 'Evidência', path: '/evidencia' },
+    { label: "Relatório", path: "/relatorio" },
+    { label: "Editar Caso", path: "/editar" },
+    { label: "Atribuir Funcionário", path: "/atribuir-funcionario" },
+    { label: "Vítima", path: "/vitima" },
+    { label: "Evidência", path: "/evidencia" },
   ];
 
   return (
@@ -23,7 +41,9 @@ export default function CaseScreen() {
         <View className="items-center mb-4">
           <View className="flex-row items-center">
             <Ionicons name="shield-checkmark" size={24} color="#1B3A57" />
-            <Text className="ml-2 text-xl font-bold text-[#1B3A57]">Pericium</Text>
+            <Text className="ml-2 text-xl font-bold text-[#1B3A57]">
+              Pericium
+            </Text>
           </View>
         </View>
 
@@ -31,25 +51,29 @@ export default function CaseScreen() {
 
         {/* Card com os dados do caso */}
         <View className="bg-[#F4F6F8] rounded-xl p-4">
-          <Text className="font-semibold text-sm mb-1">ID 0111111</Text>
-          <Text className="text-sm mb-1">Data de abertura: 19/05/25</Text>
-          <Text className="text-sm mb-1">Data de fechamento: dd/mm/aaaa</Text>
+          <Text className="font-semibold text-sm mb-1">{caso._id}</Text>
+          <Text className="text-sm mb-1">{caso.dataAbertura}</Text>
+          <Text className="text-sm mb-1"></Text>
 
           <Text className="font-semibold mt-3 text-sm">Título:</Text>
-          <Text className="text-sm">Allan foi assaltado</Text>
+          <Text className="text-sm">{caso.titulo}</Text>
 
           <Text className="font-semibold mt-3 text-sm">Status:</Text>
-          <Text className="bg-gray-300 w-fit px-2 py-1 mt-1 rounded-md text-sm">Em andamento</Text>
+          <Text className="bg-gray-300 w-fit px-2 py-1 mt-1 rounded-md text-sm">
+            {caso.status}
+          </Text>
 
-          <Text className="font-semibold mt-3 text-sm">Peritos responsáveis:</Text>
+          <Text className="font-semibold mt-3 text-sm">
+            Peritos responsáveis:
+          </Text>
           <View className="mt-1 space-y-1">
-            <Text className="bg-gray-300 w-fit px-2 py-1 rounded-md text-sm">Antonio Vinicius (Assistente)</Text>
-            <Text className="bg-gray-300 w-fit px-2 py-1 rounded-md text-sm">Matheus Ramos (Perito)</Text>
+            <Text className="bg-gray-300 w-fit px-2 py-1 rounded-md text-sm">
+              {caso.userId}
+            </Text>
           </View>
-
           <Text className="font-semibold mt-3 text-sm">Descrição:</Text>
           <Text className="text-sm mt-1">
-            Ele caminhava na Boa Vista e foi assaltado por um meliante que levava uma faca. O mesmo o deferiu um golpe na boca que foi rasgada de um canto a outro.
+            {caso.descricao}
           </Text>
         </View>
       </ScrollView>
