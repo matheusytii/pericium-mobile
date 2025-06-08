@@ -14,9 +14,9 @@ export default function Login() {
     setError("");
 
     try {
-      const { access_token, user } = await login( cpf, password );
+      const { access_token, user } = await login(cpf, password);
       if (access_token !== null && access_token !== undefined) {
-        Alert.alert(`Seja bem vindo ${user.name}`)
+        Alert.alert(`Seja bem vindo ${user.name}`);
         router.push("/casospericiais");
       } else {
         setError("Usuário ou senha inválidos.");
@@ -24,7 +24,7 @@ export default function Login() {
       }
     } catch (error) {
       console.error("❌ Erro no login:", error);
-      
+
       Alert.alert("Erro", "Erro ao fazer login");
     }
   };
@@ -36,41 +36,38 @@ export default function Login() {
         <Text className="text-center text-xs">Faça o login para poder</Text>
         <Text className="text-center text-xs">acessar o sistema</Text>
         <View className="w-full m-10">
-          <Text className="pl-6 pb-1 pt-2 text-sm font-bold text-periciumBlack">
-            CPF
-          </Text>
-
-        <View className="w-full mt-5">
-          <Text className="pl-6 pb-1 pt-2 text-sm font-bold text-black">
-            CPF
-          </Text>
-          <TextInput
-            className="bg-gray-200 rounded px-3 h-10 mx-4 text-black"
-            placeholder="Digite seu CPF"
-            placeholderTextColor="#000"
-            keyboardType="numeric"
-            value={cpf}
-            onChangeText={setCpf}
-          />
-          <Text className="pl-6 pb-1 pt-2 text-sm font-bold text-periciumBlack">
-            Senha
-          </Text>
-          <TextInput
-            className="bg-[#EFEFEF] rounded-md pl-3 h-10 ml-4 mr-4"
-            placeholder="Digite sua senha"
-            secureTextEntry
-            value={password}
-            onChangeText={setPassword}
-          />
-          <TouchableOpacity
-            className="mt-5 bg-periciumBlueDark rounded-lg mx-4 h-12 justify-center"
-            onPress={handlesubmit}
-          >
-            <Text className="text-center text-white font-bold">Entrar</Text>
-          </TouchableOpacity>
-          <Text className="text-center text-periciumBlack pt-4">
-            Esqueci a senha
-          </Text>
+          <View className="w-full mt-5">
+            <Text className="pl-6 pb-1 pt-2 text-sm font-bold text-black">
+              CPF
+            </Text>
+            <TextInput
+              className="bg-gray-200 rounded px-3 h-10 mx-4 text-black"
+              placeholder="Digite seu CPF"
+              placeholderTextColor="#000"
+              keyboardType="numeric"
+              value={cpf}
+              onChangeText={setCpf}
+            />
+            <Text className="pl-6 pb-1 pt-2 text-sm font-bold text-periciumBlack">
+              Senha
+            </Text>
+            <TextInput
+              className="bg-[#EFEFEF] rounded-md pl-3 h-10 ml-4 mr-4"
+              placeholder="Digite sua senha"
+              secureTextEntry
+              value={password}
+              onChangeText={setPassword}
+            />
+            <TouchableOpacity
+              className="mt-5 bg-periciumBlueDark rounded-lg mx-4 h-12 justify-center"
+              onPress={handlesubmit}
+            >
+              <Text className="text-center text-white font-bold">Entrar</Text>
+            </TouchableOpacity>
+            <Text className="text-center text-periciumBlack pt-4">
+              Esqueci a senha
+            </Text>
+          </View>
         </View>
       </View>
     </View>

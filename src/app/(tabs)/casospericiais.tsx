@@ -101,7 +101,6 @@ export default function CasosPericiais({ reloadKey }: { reloadKey: number }) {
       <Text className="text-black font-bold text-xl mb-3 underline">
         Casos Periciais
       </Text>
-
       {/* Barra de busca */}
       <View className="flex-row items-center bg-[#C2CDD6] rounded-md px-3 py-2 mb-3">
         <TextInput
@@ -147,8 +146,8 @@ export default function CasosPericiais({ reloadKey }: { reloadKey: number }) {
 
             className="bg-[#D6DDE3] rounded-xl p-4 mb-4 relative border border-[#929292]"
           >
-            <Text className="font-bold text-base">ID {caso.id}</Text>
-            <Text className="text-base">Data: {caso.data}</Text>
+            <Text className="font-bold text-base">ID {caso._id}</Text>
+            <Text className="text-base">Data: {caso.dataAbertura}</Text>
             <Text className="text-base font-semibold">
               Título: {caso.titulo}
             </Text>

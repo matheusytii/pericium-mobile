@@ -90,26 +90,6 @@ export default function LaudoEvidencia() {
           </View>
         </View>
       </Modal>
-
-      {/* Barra de navegação inferior */}
-      <View className="absolute bottom-0 left-0 right-0 bg-[#D6DDE3] flex-row justify-around py-3">
-        <TouchableOpacity className="items-center">
-          <Ionicons name="bar-chart" size={24} color="#333" />
-          <Text className="text-xs mt-1">Dashboard</Text>
-        </TouchableOpacity>
-        <TouchableOpacity className="items-center">
-          <Ionicons name="folder-open" size={24} color="#1B3A57" />
-          <Text className="text-xs mt-1 font-bold text-[#1B3A57]">Casos</Text>
-        </TouchableOpacity>
-        <TouchableOpacity className="items-center">
-          <Ionicons name="people" size={24} color="#333" />
-          <Text className="text-xs mt-1">Funcionários</Text>
-        </TouchableOpacity>
-        <TouchableOpacity className="items-center">
-          <Ionicons name="person-circle" size={24} color="#333" />
-          <Text className="text-xs mt-1">Perfil</Text>
-        </TouchableOpacity>
-      </View>
     </View>
   );
 }

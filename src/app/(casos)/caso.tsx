@@ -28,9 +28,8 @@ export default function CaseScreen() {
   const menuOptions = [
     { label: "Relatório", path: "/relatorio" },
     { label: "Editar Caso", path: "/editar" },
-    { label: "Atribuir Funcionário", path: "/atribuir-funcionario" },
     { label: "Vítima", path: "/vitima" },
-    { label: "Evidência", path: "/evidencia" },
+    { label: "Evidência", path: "/evidenciadocaso" },
   ];
 
   return (
@@ -80,7 +79,7 @@ export default function CaseScreen() {
 
       {/* Botões do menu flutuante, reposicionados acima do botão + */}
       {menuOpen && (
-        <View className="absolute bottom-36 right-4 space-y-2 items-end">
+        <View className="absolute bottom-32 right-4 space-y-2 items-end">
           {menuOptions.map((option, idx) => (
             <TouchableOpacity
               key={idx}
@@ -103,29 +102,6 @@ export default function CaseScreen() {
       >
         <Ionicons name="add" size={28} color="white" />
       </TouchableOpacity>
-
-      {/* Navegação inferior */}
-      <View className="flex-row justify-around bg-[#E4E9ED] py-3 absolute bottom-0 left-0 right-0">
-        <TouchableOpacity className="items-center">
-          <Ionicons name="bar-chart" size={24} color="#333" />
-          <Text className="text-xs mt-1">Dashboard</Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity className="items-center">
-          <Ionicons name="folder-open" size={24} color="#333" />
-          <Text className="text-xs mt-1">Casos</Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity className="items-center">
-          <Ionicons name="people" size={24} color="#333" />
-          <Text className="text-xs mt-1">Funcionários</Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity className="items-center">
-          <Ionicons name="person-circle" size={26} color="#1B3A57" />
-          <Text className="text-xs mt-1 text-[#1B3A57] font-bold">Perfil</Text>
-        </TouchableOpacity>
-      </View>
     </View>
   );
 }
