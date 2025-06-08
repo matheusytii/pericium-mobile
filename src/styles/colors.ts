@@ -1,8 +1,8 @@
 export const colors = {
-    periciumWhite: "#E1E1E6",
+    periciumWhite: "#B6C0C7",
     periciumBlack: "#121214",
     periciumGreen: "#00875F",
-    periciumGreenDark: "#00453A",
+    periciumBlueDark: "#15354B",
     periciumGreenLight: "#00B37E",
     periciumGreenLighter: "#04D361",
     periciumGreenLightest: "#84D361",

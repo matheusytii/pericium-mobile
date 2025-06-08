@@ -1,3 +1,4 @@
+import React from "react";
 import {
   StyleSheet,
   Text,
@@ -5,106 +6,37 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
+import { useRouter } from "expo-router";
+
 
 export default function Login() {
+  const router = useRouter()
   return (
-    <View style={styles.fullScreen}>
-      <View style={styles.contentContainer}>
-        <Text style={styles.title}>Login</Text>
-        <Text style={styles.description}>Faça o login para poder</Text>
-        <Text style={styles.description}>acessar o sistema</Text>
-        <View style={styles.form}>
-          <Text style={styles.titleInput}>CPF</Text>
+    <View className="bg-periciumWhite flex-1 justify-center ">
+      <View className="items-center justify-center">
+        <Text className="text-center text-3xl font-bold p-3">Login</Text>
+        <Text className="text-center text-xs">Faça o login para poder</Text>
+        <Text className="text-center text-xs">acessar o sistema</Text>
+        <View className="w-full m-10">
+          <Text className="pl-6 pb-1 pt-2 text-sm font-bold text-periciumBlack">CPF</Text>
+
           <TextInput
-            style={styles.input}
+            className="bg-[#EFEFEF] rounded-md pl-3 h-10 ml-4 mr-4"
             placeholder="Digite seu CPF"
-            placeholderTextColor="#000000"
             keyboardType="numeric"
-          />
-          <Text style={styles.titleInput}>Senha</Text>
+            />
+          <Text className="pl-6 pb-1 pt-2 text-sm font-bold text-periciumBlack">Senha</Text>
           <TextInput
-            style={styles.input}
+            className="bg-[#EFEFEF] rounded-md pl-3 h-10 ml-4 mr-4"
             placeholder="Digite sua senha"
-            placeholderTextColor="#000000"
-          />
-          <TouchableOpacity style={styles.button}>
-            <Text style={styles.textButton}>Entrar</Text>
+            secureTextEntry
+            />
+          <TouchableOpacity className="mt-5 bg-periciumBlueDark rounded-lg mx-4 h-12 justify-center" onPress={() => router.push("/casospericiais")}>
+            <Text className="text-center text-white font-bold">Entrar</Text>
           </TouchableOpacity>
-          <Text style={styles.text}>Esqueci a senha</Text>
+          <Text className="text-center text-periciumBlack pt-4">Esqueci a senha</Text>
         </View>
       </View>
     </View>
   );
 }
-
-export const styles = StyleSheet.create({
-  fullScreen: {
-    backgroundColor: "#B6C0C7",
-    flex: 1,
-  },
-  contentContainer: {
-    marginTop: 250,
-    alignContent: "center",
-    justifyContent: "center",
-  },
-
-  title: {
-    textAlign: "center",
-    fontSize: 36,
-    fontWeight: "bold",
-    paddingBottom: 10,
-  },
-
-  description: {
-    textAlign: "center",
-    fontSize: 16,
-  },
-
-  form: {
-    marginTop: 20,
-
-    width: "100%",
-  },
-
-  input: {
-    backgroundColor: "#EFEFEF",
-    borderRadius: 5,
-    paddingLeft: 10,
-    height: 40,
-    marginLeft: 15,
-    marginRight: 15,
-    borderColor: "#000000",
-  },
-
-  titleInput: {
-    paddingLeft: 24,
-    paddingBottom: 5,
-    paddingTop: 10,
-    fontSize: 14,
-    fontWeight: "bold",
-    color: "#000000",
-  },
-
-  button: {
-    marginTop: 20,
-    marginLeft: 26,
-    marginRight: 26,
-    backgroundColor: "#15354B",
-    alignContent: "center",
-    justifyContent: "center",
-    height: 45,
-    borderRadius: 10,
-  },
-
-  textButton: {
-    textAlign: "center",
-    color: "#ffffff",
-    fontWeight: "bold",
-  },
-
-  text: {
-    textAlign: "center",
-    color: "#000000",
-    paddingTop: 14,
-  },
-});
