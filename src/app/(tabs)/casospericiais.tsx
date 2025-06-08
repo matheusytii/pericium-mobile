@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, ScrollView } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import { useRouter } from "expo-router";
 
 const casos = [
   { id: '0111111', data: '19/05/25', titulo: 'Allan foi assaltado', status: 'Em andamento' },
@@ -12,6 +13,7 @@ const casos = [
 export default function CasosPericiais() {
   const [showNovo, setShowNovo] = useState(false);
   const [periodoSelecionado, setPeriodoSelecionado] = useState<'mes' | 'semana' | 'dia'>('mes');
+  const router = useRouter()
 
   return (
     <View className="flex-1 bg-white pt-12 px-4 relative">
@@ -57,8 +59,7 @@ export default function CasosPericiais() {
         ))}
       </View>
 
-      {/* Lista de Casos */}
-      <ScrollView className="mb-40">
+      <ScrollView>
         {casos.map((caso, index) => (
           <View key={index} className="bg-[#D6DDE3] rounded-xl p-4 mb-4 relative">
             <Text className="font-bold text-sm text-[#1B3A57]">ID {caso.id}</Text>
@@ -76,43 +77,20 @@ export default function CasosPericiais() {
         ))}
       </ScrollView>
 
-      {/* Botão "Novo Caso" logo acima do "+" */}
       {showNovo && (
-        <TouchableOpacity className="bg-[#1B3A57] px-4 py-2 rounded-md absolute bottom-36 right-4 z-20">
+        <TouchableOpacity className="bg-[#1B3A57] px-4 py-2 rounded-md absolute bottom-24 right-4 z-20"
+        onPress={() => router.push("/novocaso")}>
           <Text className="text-white text-sm">Novo Caso</Text>
         </TouchableOpacity>
       )}
 
-      {/* Botão "+" flutuante */}
       <TouchableOpacity
         onPress={() => setShowNovo(!showNovo)}
-        className="bg-[#1B3A57] w-12 h-12 rounded-full items-center justify-center absolute bottom-20 right-4 z-10"
+        className="bg-[#1B3A57] w-12 h-12 rounded-full items-center justify-center absolute bottom-10 right-4 z-10"
       >
         <Ionicons name="add" size={28} color="white" />
       </TouchableOpacity>
 
-      {/* Bottom Tabs */}
-      <View className="flex-row justify-around bg-[#E4E9ED] py-3 absolute bottom-0 left-0 right-0">
-        <TouchableOpacity className="items-center">
-          <Ionicons name="bar-chart" size={24} color="#333" />
-          <Text className="text-xs mt-1">Dashboard</Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity className="items-center">
-          <Ionicons name="folder-open" size={24} color="#1B3A57" />
-          <Text className="text-xs mt-1 text-[#1B3A57] font-bold">Casos</Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity className="items-center">
-          <Ionicons name="people" size={24} color="#333" />
-          <Text className="text-xs mt-1">Funcionários</Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity className="items-center">
-          <Ionicons name="person-circle" size={26} color="#333" />
-          <Text className="text-xs mt-1">Perfil</Text>
-        </TouchableOpacity>
-      </View>
     </View>
   );
 }
