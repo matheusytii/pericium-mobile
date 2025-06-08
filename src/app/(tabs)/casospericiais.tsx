@@ -1,47 +1,89 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   View,
   Text,
   TextInput,
   TouchableOpacity,
   ScrollView,
+  Pressable,
+  Alert,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
+import { getCaso, deleteCaso } from "../../service/casos";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { parseJwt } from "../../types/parseJWT";
+import { CreateCaseDTO } from "../../interface/casoDTO";
 
-const casos = [
-  {
-    id: "0111111",
-    data: "19/05/25",
-    titulo: "Allan foi assaltado",
-    status: "Em andamento",
-  },
-  {
-    id: "0111111",
-    data: "19/05/25",
-    titulo: "Allan está sem celular",
-    status: "Em andamento",
-  },
-  {
-    id: "0111111",
-    data: "19/05/25",
-    titulo: "Allan está triste",
-    status: "Em andamento",
-  },
-  {
-    id: "0111111",
-    data: "19/05/25",
-    titulo: "Allan se matou",
-    status: "Em andamento",
-  },
-];
 
-export default function CasosPericiais() {
+export default function CasosPericiais({ reloadKey }: { reloadKey: number }) {
   const [showNovo, setShowNovo] = useState(false);
+  const [casos, setCasos] = useState<CreateCaseDTO[]>([]);
   const [periodoSelecionado, setPeriodoSelecionado] = useState<
     "mes" | "semana" | "dia"
   >("mes");
   const router = useRouter();
+
+  const [loading, setLoading] = useState(true);
+
+  const carregarCasos = async () => {
+    try {
+      const token = await AsyncStorage.getItem("token");
+      const usuario = token ? parseJwt(token) : null;
+
+      const todoscasos = await getCaso();
+      if (!usuario) {
+        setCasos([]);
+        return;
+      }
+      const casosFiltrados =
+        usuario.role === "ADMIN"
+          ? todoscasos
+          : todoscasos.filter((casos: any) => casos.userId._id === usuario.sub);
+      setCasos(casosFiltrados);
+    } catch (error) {
+      console.error("Casos não encontrados", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleOpencaso = (id: string) => {
+    router.push(`/caso?id=${id}`);
+  };
+
+  const handleDeleteCaso = async (casoId: string) => {
+    setLoading(true);
+    try {
+      await deleteCaso(casoId);
+      Alert.alert("Caso deletado com sucesso.");
+      carregarCasos();
+    } catch (error) {
+      Alert.alert("Erro ao deletar caso");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const confirmarDeleteCaso = (casoId: string) => {
+    Alert.alert(
+      "Confirmar exclusão",
+      "Tem certeza que deseja deletar este caso?",
+      [
+        { text: "Cancelar", style: "cancel" },
+        {
+          text: "Deletar",
+          style: "destructive",
+          onPress: () => handleDeleteCaso(casoId),
+        },
+      ]
+    );
+  };
+
+  useEffect(() => {
+    carregarCasos();
+  }, [reloadKey]);
+
 
   return (
     <View className="flex-1 bg-white pt-12 px-4 relative">
@@ -56,7 +98,9 @@ export default function CasosPericiais() {
       </View>
 
       {/* Título */}
-      <Text className="text-black font-bold text-xl mb-3">Casos Periciais</Text>
+      <Text className="text-black font-bold text-xl mb-3 underline">
+        Casos Periciais
+      </Text>
 
       {/* Barra de busca */}
       <View className="flex-row items-center bg-[#C2CDD6] rounded-md px-3 py-2 mb-3">
@@ -81,7 +125,8 @@ export default function CasosPericiais() {
             }`}
           >
             <Text
-              className={`text-base font-semibold ${
+
+              className={`text-sm font-semibold ${
                 periodoSelecionado === periodo ? "text-white" : "text-black"
               }`}
             >
@@ -99,6 +144,7 @@ export default function CasosPericiais() {
         {casos.map((caso, index) => (
           <View
             key={index}
+
             className="bg-[#D6DDE3] rounded-xl p-4 mb-4 relative border border-[#929292]"
           >
             <Text className="font-bold text-base">ID {caso.id}</Text>
@@ -112,20 +158,14 @@ export default function CasosPericiais() {
                 {caso.status}
               </Text>
             </View>
-            <View className="flex-row justify-end mt-3">
-              <TouchableOpacity
-                onPress={() => console.log("Visualizar", caso.id)}
-              >
-                <Ionicons name="eye-outline" size={24} color="black" />
-              </TouchableOpacity>
-              <TouchableOpacity onPress={() => console.log("Deletar", caso.id)}>
-                <Ionicons
-                  name="trash-outline"
-                  size={24}
-                  color="red"
-                  className="ml-[258px]"
-                />
-              </TouchableOpacity>
+            <View className="absolute top-2 right-2 flex-row space-x-2">
+              <Pressable onPress={() => handleOpencaso(caso._id || "")}>
+                <Ionicons name="eye-outline" size={20} color="#1B3A57" />
+              </Pressable>
+              <Pressable onPress={() => confirmarDeleteCaso(caso._id || "")}>
+                <Ionicons name="trash-outline" size={20} color="#1B3A57" />
+              </Pressable>
+
             </View>
           </View>
         ))}
@@ -136,7 +176,8 @@ export default function CasosPericiais() {
           className="bg-[#1B3A57] px-4 py-2 rounded-md absolute bottom-24 right-4 z-20"
           onPress={() => router.push("/novocaso")}
         >
-          <Text className="text-white text-base">Novo Caso</Text>
+
+          <Text className="text-white text-sm">Novo Caso</Text>
         </TouchableOpacity>
       )}
 
