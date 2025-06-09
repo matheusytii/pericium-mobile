@@ -12,10 +12,18 @@ import { Ionicons } from "@expo/vector-icons";
 export default function Perfil() {
   const [passwordVisible, setPasswordVisible] = useState(false);
   const [password, setPassword] = useState("");
-  const { logout } = useAuth()
+  const { logout } = useAuth();
 
   return (
     <View style={styles.fullScreen}>
+      <View className="items-center mb-4">
+        <View className="flex-row items-center">
+          <Ionicons name="shield-checkmark" size={24} color="#1B3A57" />
+          <Text className="ml-2 text-xl font-bold text-[#1B3A57]">
+            Pericium
+          </Text>
+        </View>
+      </View>
       <Text style={styles.title}>Perfil</Text>
       <View style={styles.form}>
         <View style={styles.inside}>
@@ -78,7 +86,7 @@ export default function Perfil() {
 
 export const styles = StyleSheet.create({
   fullScreen: {
-    backgroundColor: "#EFEFEF",
+    backgroundColor: "#F5F5F4",
     alignContent: "center",
     justifyContent: "center",
   },
@@ -87,7 +95,7 @@ export const styles = StyleSheet.create({
     fontSize: 26,
     fontWeight: "bold",
     marginLeft: 25,
-    marginTop: 20,
+    marginTop: 24,
   },
   form: {
     marginTop: 20,

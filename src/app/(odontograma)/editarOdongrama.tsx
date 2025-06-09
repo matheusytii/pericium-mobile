@@ -41,6 +41,14 @@ export default function editarOdontograma() {
   };
   return (
     <View className="flex-1 bg-[#F5F5F4]">
+      <View className="items-center mb-4">
+        <View className="flex-row items-center">
+          <Ionicons name="shield-checkmark" size={24} color="#1B3A57" />
+          <Text className="ml-2 text-xl font-bold text-[#1B3A57]">
+            Pericium
+          </Text>
+        </View>
+      </View>
       <Text className="text-left text-2xl font-bold ml-6 mt-8">
         Novo Odontograma
       </Text>

@@ -12,6 +12,14 @@ import { Ionicons } from "@expo/vector-icons";
 export default function novaVitima() {
   return (
     <View className="flex-1 bg-[#F5F5F4]">
+      <View className="items-center mb-3">
+        <View className="flex-row items-center">
+          <Ionicons name="shield-checkmark" size={24} color="#1B3A57" />
+          <Text className="text-[#1B3A57] text-xl font-bold ml-2">
+            Pericium
+          </Text>
+        </View>
+      </View>
       <Text className="text-left text-2xl font-bold ml-6 mt-8">
         Nova Vítima
       </Text>

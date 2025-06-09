@@ -13,6 +13,14 @@ import { Ionicons } from "@expo/vector-icons";
 export default function infoVitima() {
   return (
     <View className="flex-1 bg-[#F5F5F4]">
+      <View className="items-center mb-4">
+        <View className="flex-row items-center">
+          <Ionicons name="shield-checkmark" size={24} color="#1B3A57" />
+          <Text className="ml-2 text-xl font-bold text-[#1B3A57]">
+            Pericium
+          </Text>
+        </View>
+      </View>
       <Text className="text-left text-2xl font-bold ml-6 mt-8">Vítima</Text>
       <View className="bg-[#D6DDE3] rounded-xl p-4 mt-4 mb-4 relative ml-4 mr-4 border border-[#929292]">
         <Text className="text-base font-semibold">ID: 0111111</Text>
