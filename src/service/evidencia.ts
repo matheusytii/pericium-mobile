@@ -1,11 +1,10 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import api from "./api";
 import {
-  CreateEvidenciaDTO,
   UpdateEvidenciaDTO,
 } from "../interface/evidenciaDTO";
 
-export const criarEvidencia = async (dados: CreateEvidenciaDTO) => {
+export const criarEvidencia = async (dados: FormData) => {
   const token = await AsyncStorage.getItem("token");
 
   if (!token) {

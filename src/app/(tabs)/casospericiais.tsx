@@ -14,7 +14,8 @@ import { getCaso, deleteCaso } from "../../service/casos";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { parseJwt } from "../../types/parseJWT";
 import { CreateCaseDTO } from "../../interface/casoDTO";
-
+import { format } from "date-fns";
+import { ptBR } from "date-fns/locale";
 
 export default function CasosPericiais({ reloadKey }: { reloadKey: number }) {
   const [showNovo, setShowNovo] = useState(false);
@@ -84,9 +85,8 @@ export default function CasosPericiais({ reloadKey }: { reloadKey: number }) {
     carregarCasos();
   }, [reloadKey]);
 
-
   return (
-    <View className="flex-1 bg-white pt-12 px-4 relative">
+    <View className="flex-1 bg-[#F5F5F4] pt-12 px-4 relative">
       {/* Cabeçalho com logo fake */}
       <View className="items-center mb-3">
         <View className="flex-row items-center">
@@ -98,7 +98,7 @@ export default function CasosPericiais({ reloadKey }: { reloadKey: number }) {
       </View>
 
       {/* Título */}
-      <Text className="text-black font-bold text-xl mb-3 underline">
+      <Text className="text-black font-bold text-3xl mb-3">
         Casos Periciais
       </Text>
       {/* Barra de busca */}
@@ -124,7 +124,6 @@ export default function CasosPericiais({ reloadKey }: { reloadKey: number }) {
             }`}
           >
             <Text
-
               className={`text-sm font-semibold ${
                 periodoSelecionado === periodo ? "text-white" : "text-black"
               }`}
@@ -141,32 +140,36 @@ export default function CasosPericiais({ reloadKey }: { reloadKey: number }) {
 
       <ScrollView>
         {casos.map((caso, index) => (
-          <View
-            key={index}
-
-            className="bg-[#D6DDE3] rounded-xl p-4 mb-4 relative border border-[#929292]"
-          >
-            <Text className="font-bold text-base">ID {caso._id}</Text>
-            <Text className="text-base">Data: {caso.dataAbertura}</Text>
-            <Text className="text-base font-semibold">
-              Título: {caso.titulo}
-            </Text>
-            <View className="flex-row items-center mt-1">
-              <Text className="text-base">Status:</Text>
-              <Text className="ml-2 px-2 py-0.5 text-sm bg-white rounded">
-                {caso.status}
+          <Pressable onPress={() => handleOpencaso(caso._id || "")}>
+            <View
+              key={index}
+              className="bg-[#D6DDE3] rounded-xl p-4 mb-4 relative border border-[#929292]"
+            >
+              <Text className="font-bold text-base">ID {caso._id}</Text>
+              <Text className="text-base font-bold">
+                Data:{" "}
+                <Text className="text-base font-medium">
+                  {format(
+                    new Date(caso.dataAbertura),
+                    "dd/MM/yyyy 'às' HH:mm",
+                    { locale: ptBR }
+                  )}
+                </Text>
               </Text>
+              <Text className="text-base font-semibold">
+                Título: {caso.titulo}
+              </Text>
+              <View className="flex-row items-center mt-1">
+                <Text className="text-base">Status:</Text>
+                <Text className="ml-2 px-2 py-0.5 text-sm bg-white rounded">
+                  {caso.status}
+                </Text>
+              </View>
+              {/* <Pressable onPress={() => confirmarDeleteCaso(caso._id || "")}>
+                <Ionicons name="trash-outline" size={24} color="red" className= "ml-[278px]" />
+                </Pressable> */}
             </View>
-            <View className="absolute top-2 right-2 flex-row space-x-2">
-              <Pressable onPress={() => handleOpencaso(caso._id || "")}>
-                <Ionicons name="eye-outline" size={20} color="#1B3A57" />
-              </Pressable>
-              <Pressable onPress={() => confirmarDeleteCaso(caso._id || "")}>
-                <Ionicons name="trash-outline" size={20} color="#1B3A57" />
-              </Pressable>
-
-            </View>
-          </View>
+          </Pressable>
         ))}
       </ScrollView>
 
@@ -175,7 +178,6 @@ export default function CasosPericiais({ reloadKey }: { reloadKey: number }) {
           className="bg-[#1B3A57] px-4 py-2 rounded-md absolute bottom-24 right-4 z-20"
           onPress={() => router.push("/novocaso")}
         >
-
           <Text className="text-white text-sm">Novo Caso</Text>
         </TouchableOpacity>
       )}

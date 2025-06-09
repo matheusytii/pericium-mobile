@@ -48,13 +48,22 @@ export default function Vitimas() {
     }
   };
 
-  return (
-    <View className="flex-1 bg-gray-200">
-      <Text className="text-left text-2xl font-bold ml-6 mt-8">Vítimas</Text>
 
-      <View className="flex-row items-center bg-gray-400 rounded-md mx-4 px-3 h-10 mt-3">
+  return (
+    <View className="flex-1 bg-[#F5F5F4]">
+      <View className="items-center mb-3">
+        <View className="flex-row items-center">
+          <Ionicons name="shield-checkmark" size={24} color="#1B3A57" />
+          <Text className="text-[#1B3A57] text-xl font-bold ml-2">
+            Pericium
+          </Text>
+        </View>
+      </View>
+      <Text className="text-left text-3xl font-bold ml-6 mt-8">Vítimas</Text>
+
+      <View className="flex-row items-center bg-gray-400 rounded-md mx-4 px-3 h-12 mt-3">
         <TextInput
-          className="flex-1 h-10 px-0 text-black"
+          className="flex-1 h-14 px-0 text-black"
           placeholder="Buscar"
           placeholderTextColor="#000"
         />
@@ -67,7 +76,6 @@ export default function Vitimas() {
         <Text className="text-base font-bold text-black">ID do Caso: {caseId}</Text>
         <Text className="text-base font-bold text-black">Título do Caso: Caso Exemplo</Text>
       </View>
-
       {loading ? (
         <ActivityIndicator size="large" color="#000" className="mt-8" />
       ) : (
@@ -88,6 +96,7 @@ export default function Vitimas() {
                   <Ionicons name="trash-outline" size={24} color="red" />
                 </TouchableOpacity>
               </View>
+
             </View>
           )}
         />

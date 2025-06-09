@@ -36,15 +36,25 @@ export default function odontogramas() {
       numero: "5",
       nome: "Incisio Lateral",
     },
-        {
+    {
       id: "6",
       numero: "5",
       nome: "Incisio Lateral",
     },
   ];
   return (
-    <View className="flex-1 bg-gray-200">
-      <Text className="text-left text-2xl font-bold ml-6 mt-8">Odontogramas</Text>
+    <View className="flex-1 bg-[#F5F5F4]">
+      <View className="items-center mb-4">
+        <View className="flex-row items-center">
+          <Ionicons name="shield-checkmark" size={24} color="#1B3A57" />
+          <Text className="ml-2 text-xl font-bold text-[#1B3A57]">
+            Pericium
+          </Text>
+        </View>
+      </View>
+      <Text className="text-left text-2xl font-bold ml-6 mt-8">
+        Odontogramas
+      </Text>
       <View className="flex-row items-center bg-gray-400 rounded-md mx-4 px-3 h-10 mt-3">
         <TextInput
           className="flex-1 h-10 px-0 text-black"
