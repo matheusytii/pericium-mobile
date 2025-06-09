@@ -14,72 +14,73 @@ import { getByPdf } from "../../service/laudo";
 import { CreateCaseDTO } from "../../interface/casoDTO";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { getIdCaso } from "../../service/casos";
-
+import { format } from "date-fns";
+import { ptBR } from "date-fns/locale";
 
 export interface visualizarLaudo {
-    laudoId: string;
-  }
+  laudoId: string;
+}
 
 export interface CaseidProps {
-    caseId: CreateCaseDTO;
-  }
+  caseId: CreateCaseDTO;
+}
 
 export default function EvidenciasDoCaso() {
   const [mostrarOpcoes, setMostrarOpcoes] = useState(false);
-  const [ evidencias, setEvidencias ] = useState<UpdateEvidenciaDTO[]>([])
-  const [ caso, setCaso ] = useState<CreateCaseDTO>()
+  const [evidencias, setEvidencias] = useState<UpdateEvidenciaDTO[]>([]);
+  const [caso, setCaso] = useState<CreateCaseDTO>();
   const [loading, setLoading] = useState(true);
-  const [selectedEvidenciaId, setSelectedEvidenciaId] = useState<string | null>(null)
-  const { id } = useLocalSearchParams()  
+  const [selectedEvidenciaId, setSelectedEvidenciaId] = useState<string | null>(
+    null
+  );
+  const { id } = useLocalSearchParams();
   const route = useRouter();
 
-   useEffect(() => {
-     if (!id)  {
-       return ;
-     }
-     const fetchEvidencias = async () => {
-       try {
-         const [ evidenciaData, casoData ] = await Promise.all([
-           getEvidenciaByCaseId(id as string),
-           getIdCaso(id as string),
-         ])
-         setEvidencias(evidenciaData);
-         setCaso(casoData)
-    
-       } catch (error) {
-         console.error("Erro na busca de evidências.", error);
-       } finally {
-         setLoading(false);
-       }
-     };
-     fetchEvidencias();
-   }, [id]);
+  useEffect(() => {
+    if (!id) {
+      return;
+    }
+    const fetchEvidencias = async () => {
+      try {
+        const [evidenciaData, casoData] = await Promise.all([
+          getEvidenciaByCaseId(id as string),
+          getIdCaso(id as string),
+        ]);
+        setEvidencias(evidenciaData);
+        setCaso(casoData);
+      } catch (error) {
+        console.error("Erro na busca de evidências.", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchEvidencias();
+  }, [id]);
 
-  const visualizarPdf = async(laudoId: string) => {
+  const visualizarPdf = async (laudoId: string) => {
     try {
       const data = await getByPdf(laudoId);
       const pdfUrl = data.pdfUrl;
       window.open(pdfUrl, "_blank");
     } catch (error) {
-      console.error("Erro ao visualizar PDF: ", error)
+      console.error("Erro ao visualizar PDF: ", error);
     }
-  }
+  };
 
-  const handleDelete = async(id:string) => {
+  const handleDelete = async (id: string) => {
     if (confirm("Tem certeza que deseja deletar essa evidência?")) {
       try {
         await deleteEvidencia(id);
-        Alert.alert("Evidencia deletada com sucesso.")
+        Alert.alert("Evidencia deletada com sucesso.");
       } catch (error) {
         console.error("erro ao deletar evidência: ", error);
-        Alert.alert("Erro ao deletar evidência")
+        Alert.alert("Erro ao deletar evidência");
       }
     }
-  }
-
+  };
 
   return (
-    <View className="flex-1 bg-white px-4 pt-10">
+    <View className="flex-1 bg-[#F5F5F4] px-4 pt-10">
       {/* Header */}
       <View className="items-center mb-4">
         <View className="flex-row items-center">
@@ -91,20 +92,23 @@ export default function EvidenciasDoCaso() {
       </View>
 
       {/* Título */}
-      <Text className="text-black font-extrabold text-xl mb-2">
+      <Text className="text-black font-extrabold text-3xl mb-2">
         Evidências do Caso
       </Text>
 
       {/* Campo de busca (maior e com nova cor) */}
       <View className="bg-[#CBD5E1] rounded-lg px-4 py-3 mb-4 flex-row items-center">
-        <TextInput placeholder="Buscar" className="flex-1 text-sm text-black" />
+        <TextInput
+          placeholder="Buscar"
+          className="flex-1 text-base text-black"
+        />
         <Ionicons name="search" size={20} color="#1B3A57" />
       </View>
 
       {/* ID do caso (mais alto) */}
       <View className="bg-[#CBD5E1] px-4 py-4 rounded-md mb-3">
-        <Text className="text-xs font-bold text-[#1B3A57]">ID {id}</Text>
-        <Text className="text-black font-medium">
+        <Text className="text-2xs font-bold">ID {id}</Text>
+        <Text className="text-2xs text-black font-medium">
           Titulo do caso: {caso?.titulo || "Carregando..."}
         </Text>
       </View>
@@ -115,10 +119,27 @@ export default function EvidenciasDoCaso() {
         keyExtractor={(item) => item._id}
         renderItem={({ item }) => (
           <View className="bg-white border border-gray-300 rounded-lg p-3 mb-3">
-            <Text className="text-black font-bold">Título: {item.title}</Text>
-            <Text className="text-black">Data: {item.dateRegister}</Text>
-            <Text className="text-black">Local: {item.local}</Text>
-            <TouchableOpacity className="absolute top-2 right-2"  onPress={() => route.push({ pathname:"/evidencias", params: {id: item._id}})}>
+            <Text className="text-black text-base font-bold">
+              Título: {item.title}
+            </Text>
+            <Text className="text-black text-base">
+              Data:{" "}
+              <Text className="text-base font-medium">
+                {format(new Date(item.dateRegister), "dd/MM/yyyy 'às' HH:mm", {
+                  locale: ptBR,
+                })}
+              </Text>
+            </Text>
+            <Text className="text-black text-base">Local: {item.local}</Text>
+            <TouchableOpacity
+              className="absolute top-2 right-2"
+              onPress={() =>
+                route.push({
+                  pathname: "/evidencias",
+                  params: { id: item._id },
+                })
+              }
+            >
               <Ionicons
                 name="document-text-outline"
                 size={20}
@@ -133,8 +154,16 @@ export default function EvidenciasDoCaso() {
       <View className="absolute bottom-16 right-5 items-end">
         {mostrarOpcoes && (
           <>
-            <TouchableOpacity className="bg-[#1B3A57] px-4 py-2 rounded-md mb-2 w-40 items-center" onPress={() => route.push({ pathname: "/criarevidencias", params: { caseId: id } })}>
-              <Text className="text-white font-medium">Novo evidência</Text>
+            <TouchableOpacity
+              className="bg-[#1B3A57] px-4 py-2 rounded-md mb-2 w-40 items-center"
+              onPress={() =>
+                route.push({
+                  pathname: "/criarevidencias",
+                  params: { caseId: id },
+                })
+              }
+            >
+              <Text className="text-white font-medium">Nova evidência</Text>
             </TouchableOpacity>
           </>
         )}

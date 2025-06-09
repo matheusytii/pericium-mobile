@@ -4,6 +4,9 @@ import { Ionicons } from "@expo/vector-icons";
 import { useRouter, useLocalSearchParams } from "expo-router";
 import { getIdCaso } from "../../service/casos";
 import { CreateCaseDTO } from "../../interface/casoDTO";
+import { format } from "date-fns";
+import { ptBR } from "date-fns/locale";
+
 export default function CaseScreen() {
   const { id } = useLocalSearchParams();
   const [caso, setCaso] = useState<CreateCaseDTO>();
@@ -36,7 +39,7 @@ export default function CaseScreen() {
   ];
 
   return (
-    <View className="flex-1 bg-white">
+    <View className="flex-1 bg-[#F5F5F4]">
       {/* Scroll principal */}
       <ScrollView className="flex-1 px-4 pt-12 pb-36">
         {/* Cabeçalho centralizado */}
@@ -49,38 +52,37 @@ export default function CaseScreen() {
           </View>
         </View>
 
-        <Text className="text-black font-bold text-base mb-3">Caso</Text>
+        <Text className="text-black font-bold text-3xl mb-3">Caso</Text>
 
         {/* Card com os dados do caso */}
-        <View className="bg-[#F4F6F8] rounded-xl p-4">
-          <Text className="font-semibold text-sm mb-1">{caso._id}</Text>
-          <Text className="text-sm mb-1">{caso.dataAbertura}</Text>
-          <Text className="text-sm mb-1"></Text>
+        <View className="bg-[#F4F6F8] rounded-xl p-4 border border-[#929292]">
+          <Text className="font-semibold text-base mb-1">{caso._id}</Text>
+          <Text className="text-base mb-1">
+            {format(new Date(caso.dataAbertura), "dd/MM/yyyy 'às' HH:mm", { locale: ptBR })}
+          </Text>
 
-          <Text className="font-semibold mt-3 text-sm">Título:</Text>
-          <Text className="text-sm">{caso.titulo}</Text>
+          <Text className="font-bold mt-3 text-base">Título:</Text>
+          <Text className="text-base">{caso.titulo}</Text>
 
-          <Text className="font-semibold mt-3 text-sm">Status:</Text>
-          <Text className="bg-gray-300 w-fit px-2 py-1 mt-1 rounded-md text-sm">
+          <Text className="font-bold mt-3 text-base">Status:</Text>
+          <Text className="bg-gray-300 w-fit px-2 py-1 mt-1 rounded-md text-base">
             {caso.status}
           </Text>
 
-          <Text className="font-semibold mt-3 text-sm">
+          <Text className="font-bold mt-3 text-base">
             Peritos responsáveis:
           </Text>
           <View className="mt-1 space-y-1">
-            <Text className="bg-gray-300 w-fit px-2 py-1 rounded-md text-sm">
+            <Text className="bg-gray-300 w-fit px-2 py-1 rounded-md text-base">
               {caso.userId}
             </Text>
           </View>
-          <Text className="font-semibold mt-3 text-sm">Descrição:</Text>
-          <Text className="text-sm mt-1">
+          <Text className="font-bold mt-3 text-base">Descrição:</Text>
+          <Text className="text-base mt-1">
             {caso.descricao}
           </Text>
         </View>
       </ScrollView>
-
-      {/* Botões do menu flutuante, reposicionados acima do botão + */}
       {menuOpen && (
         <View className="absolute bottom-32 right-4 space-y-2 items-end">
           {menuOptions.map((option, idx) => (
