@@ -1,10 +1,160 @@
-import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, Modal } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
+import React, { useEffect, useState } from "react";
+import {
+  View,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  Modal,
+  Alert,
+} from "react-native";
+import { Ionicons } from "@expo/vector-icons";
+import { getEvidenciaById, updateEvidencia } from "../../service/evidencia";
+import { buscarLaudo, assinarLaudo } from "../../service/laudo";
+import { parseJwt } from "../../types/parseJWT";
+import { UpdateEvidenciaDTO } from "../../interface/evidenciaDTO";
+import { useLocalSearchParams, useRouter } from "expo-router";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import DateTimePicker from "@react-native-community/datetimepicker";
 
-export default function EditarEvidenciaScreen() {
+interface EditarEvidenciaProps {
+  evidencia?: UpdateEvidenciaDTO;
+  id?: string;
+}
+
+export default function EditarEvidenciaScreen({
+  evidencia,
+}: EditarEvidenciaProps) {
   const [menuAberto, setMenuAberto] = useState(false);
+  const [title, setTitle] = useState("");
+  const [dateRegister, setDateRegister] = useState<Date>(new Date());
+  const [local, setLocal] = useState("");
+  const [tipo, setTipo] = useState("");
+  const [peritoResponsavel, setPeritoResponsavel] = useState("");
+  const [descricao, setDescricao] = useState("");
   const [modalVisivel, setModalVisivel] = useState(false);
+  const [laudoId, setLaudoId] = useState<string | null>(null);
+  const [assinado, setAssinado] = useState(false);
+  const [sucessoAssinatura, setSucessoAssinatura] = useState(false);
+  const [evidencias, setEvidencias] = useState<UpdateEvidenciaDTO | null>(null);
+  const [showPicker, setShowPicker] = useState(false);
+  const [editar, setEditar] = useState(false);
+  const [editarTitulo, setEditarTitulo] = useState(false);
+  const [editarLocal, setEditarLocal] = useState(false);
+  const [editarTipo, setEditarTipo] = useState(false);
+  const [editarDescricao, setEditarDescricao] = useState(false);
+  const [editarData, setEditarData] = useState(false);
+  const { id } = useLocalSearchParams();
+  const route = useRouter();
+
+  const onChange = (event: any, selectedDate?: Date) => {
+    setShowPicker(false);
+    if (selectedDate) {
+      setDateRegister(selectedDate);
+    }
+  };
+
+  useEffect(() => {
+    if (id) {
+  
+      getEvidenciaById(id as string)
+        .then((data) => {
+          setEvidencias(data);
+          setTitle(data.title || "");
+          setTipo(data.tipo || "");
+          setDateRegister(new Date(data.dateRegister));
+          setLocal(data.local || "");
+          setDescricao(data.descricao);
+        })
+        .catch((error) => {
+          console.error("Erro ao buscar evidência:", error);
+          Alert.alert("Evidência não encontrada.");
+        });
+    }
+  }, [id]);
+
+  const handleUpdate = async () => {
+    if (!id) return null;
+
+    try {
+      await updateEvidencia(id as string, {
+        title,
+        dateRegister: dateRegister.toISOString(),
+        local,
+        tipo,
+        peritoResponsavel,
+        descricao,
+      });
+      Alert.alert("Evidência atualizada com sucesso.");
+      route.push("/evidenciadocaso");
+    } catch (error) {}
+  };
+
+  useEffect(() => {
+    if (evidencia) {
+      async function fetchLaudo(evidenciaId: string) {
+        try {
+          const laudo = await buscarLaudo(evidenciaId);
+          if (laudo.length > 0) {
+            const primeiroLaudo = laudo[0];
+            setLaudoId(primeiroLaudo._id);
+
+            if (primeiroLaudo.assinado === true) {
+              setSucessoAssinatura(true);
+            } else {
+              setSucessoAssinatura(false);
+            }
+          } else {
+            Alert.alert("Nenhum laudo encontrado para esta evidência.");
+          }
+        } catch (error) {
+          console.error("Erro ao buscar laudo", error);
+        }
+      }
+      fetchLaudo(evidencia._id);
+    }
+  }, [evidencia]);
+
+  const handleAssinatura = async () => {
+    if (!laudoId) {
+      Alert.alert("Laudo não encontrado.");
+      return;
+    }
+    const token = await AsyncStorage.getItem("token");
+    let peritoId: string | null = null;
+
+    if (token) {
+      const decoded = parseJwt(token);
+      peritoId = decoded?.sub;
+
+      if (!peritoId) {
+        Alert.alert("Usuário não encontrado");
+        return;
+      }
+    } else {
+      Alert.alert("Usuário não autenticado");
+      return;
+    }
+
+    if (!laudoId || !peritoId) {
+      Alert.alert("Dados inválidos");
+      return;
+    }
+    try {
+      setAssinado(true);
+
+      const response = await assinarLaudo(laudoId, peritoId);
+      if (response.status === 200) {
+        setSucessoAssinatura(true);
+        Alert.alert("Laudo assinado com sucesso.");
+      } else {
+        Alert.alert("Erro ao assinar o laudo");
+      }
+    } catch (error) {
+      Alert.alert("Não foi possível assinar o laudo.");
+    } finally {
+      setAssinado(true);
+    }
+  };
 
   return (
     <View className="flex-1 bg-white pt-10 px-4">
@@ -12,11 +162,15 @@ export default function EditarEvidenciaScreen() {
       <View className="items-center mb-2">
         <View className="flex-row items-center">
           <Ionicons name="shield-checkmark" size={24} color="#1B3A57" />
-          <Text className="text-[#1B3A57] text-xl font-bold ml-2">Pericium</Text>
+          <Text className="text-[#1B3A57] text-xl font-bold ml-2">
+            Pericium
+          </Text>
         </View>
       </View>
 
-      <Text className="text-black font-bold text-lg mb-3 self-start">Editar a Evidência</Text>
+      <Text className="text-black font-bold text-lg mb-3 self-start">
+        Detalhes da Evidência
+      </Text>
 
       {/* Card maior */}
       <View className="bg-gray-200 rounded-xl px-4 py-8 space-y-4">
@@ -27,52 +181,141 @@ export default function EditarEvidenciaScreen() {
 
         {/* Título */}
         <View>
-          <Text className="font-bold text-base text-black">Título<Text className="text-red-600">*</Text></Text>
+          <View className="flex-row gap-4">
+            <Text className="font-bold text-base text-black">Título</Text>
+            <TouchableOpacity onPress={() => setEditarTitulo(!editarTitulo)}
+              >
+              <Ionicons
+                name="pencil"
+                size={20}
+                color={editarTitulo ? "#1B3A57" : "gray"}
+              />
+            </TouchableOpacity>
+          </View>
           <TextInput
-            className="bg-white rounded-md p-2 mt-1 text-base"
+            className={`rounded-md px-2 py-2 mt-1 ${
+              editarTitulo ? "bg-white" : "bg-gray-300"
+            }`}
             defaultValue="Faca do crime"
+            value={title}
+            onChangeText={setTitle}
+            editable={editarTitulo}
           />
         </View>
 
         {/* Data */}
         <View>
-          <Text className="font-bold text-base text-black">Data<Text className="text-red-600">*</Text></Text>
-          <TextInput
-            className="bg-white rounded-md p-2 mt-1 text-base"
-            defaultValue="19/05/25"
-          />
+          <Text className="font-bold text-base text-black">Data</Text>
+          <TouchableOpacity
+            onPress={() => editarData && setShowPicker(true)}
+            className={`rounded-md px-2 py-2 mt-1 ${
+              editarData ? "bg-white" : "bg-gray-300"
+            }`}
+          >
+            <Text>{dateRegister.toLocaleDateString()}</Text>
+          </TouchableOpacity>
+          {showPicker && (
+            <DateTimePicker
+              value={dateRegister}
+              mode="date"
+              display="default"
+              onChange={onChange}
+              maximumDate={new Date()}
+            />
+          )}
         </View>
 
         {/* Local */}
         <View>
-          <Text className="font-bold text-base text-black">Local<Text className="text-red-600">*</Text></Text>
+          <View className="flex-row gap-4">
+            <Text className="font-bold text-base text-black">Local</Text>
+            <TouchableOpacity onPress={() => setEditarLocal(!editarLocal)}>
+              <Ionicons
+                name="pencil"
+                size={20}
+                color={editarLocal ? "#1B3A57" : "gray"}
+              />
+            </TouchableOpacity>
+          </View>
           <TextInput
-            className="bg-white rounded-md p-2 mt-1 text-base"
-            defaultValue="Shopping Boa Vista, R. do Giriquiti, 48"
+            className={`rounded-md px-2 py-2 mt-1 ${
+              editarLocal ? "bg-white" : "bg-gray-300"
+            }`}
+            value={local}
+            onChangeText={setLocal}
+            editable={editarLocal}
+          />
+        </View>
+
+        <View>
+          <View className="flex-row gap-4">
+            <Text className="font-bold text-base text-black">Tipo</Text>
+            <TouchableOpacity onPress={() => setEditarTipo(!editarTipo)}>
+              <Ionicons
+                name="pencil"
+                size={20}
+                color={editarTipo ? "#1B3A57" : "gray"}
+              />
+            </TouchableOpacity>
+          </View>
+          <TextInput
+            className={`rounded-md px-2 py-2 mt-1 ${
+              editarTipo ? "bg-white" : "bg-gray-300"
+            }`}
+            value={tipo}
+            onChangeText={setTipo}
+            editable={editarTipo}
           />
         </View>
 
         {/* Descrição */}
         <View>
-          <Text className="font-bold text-base text-black">Descrição<Text className="text-red-600">*</Text></Text>
+          <View className="flex-row gap-4">
+            <Text className="font-bold text-base text-black">Descrição</Text>
+            <TouchableOpacity onPress={() => setEditarDescricao(!editarDescricao)}>
+              <Ionicons
+                name="pencil"
+                size={20}
+                color={editarDescricao ? "#1B3A57" : "gray"}
+              />
+            </TouchableOpacity>
+          </View>
           <TextInput
-            className="bg-white rounded-md p-2 mt-1 h-28 text-base"
+            className={`rounded-md px-2 h-20 py-2 mt-1 ${
+              editarDescricao ? "bg-white" : "bg-gray-300"
+            }`}
             multiline
-            defaultValue="A faca usada consta o DNA da vítima na área cortante e apresentava DNA do suspeito"
+            value={descricao}
+            onChangeText={setDescricao}
+            editable={editarDescricao}
+          />
+        </View>
+        <View>
+          <Text className="font-bold text-base text-black">
+            Perito Responsável
+          </Text>
+          <TextInput
+            className={`rounded-md px-2 py-2 mt-1 ${
+              editar ? "bg-white" : "bg-gray-300"
+            }`}
+            value={peritoResponsavel}
+            onChangeText={setPeritoResponsavel}
           />
         </View>
       </View>
 
       {/* Botões inferiores */}
       <View className="flex-row justify-between mt-4">
-        <TouchableOpacity className="bg-gray-300 px-4 py-2 rounded-md">
+        <TouchableOpacity
+          className="bg-gray-300 px-4 py-2 rounded-md"
+          onPress={() => route.back()}
+        >
           <Text className="text-black font-medium">◀ Cancelar</Text>
         </TouchableOpacity>
 
         <TouchableOpacity
           className="bg-[#1B3A57] px-4 py-2 rounded-md"
           onPress={() => {
-            console.log("Abrindo modal...");
             setModalVisivel(true);
           }}
         >
@@ -89,7 +332,9 @@ export default function EditarEvidenciaScreen() {
       >
         <View className="flex-1 justify-center items-center bg-black/50 px-4 z-50">
           <View className="bg-white p-5 rounded-xl w-full max-w-sm items-center">
-            <Text className="text-lg font-bold text-center mb-5">Deseja fazer essa edição?</Text>
+            <Text className="text-lg font-bold text-center mb-5">
+              Deseja fazer essa edição?
+            </Text>
 
             <View className="flex-row justify-between w-full">
               <TouchableOpacity
@@ -104,8 +349,7 @@ export default function EditarEvidenciaScreen() {
                 className="bg-[#1B3A57] px-5 py-2 rounded-md flex-row items-center"
                 onPress={() => {
                   setModalVisivel(false);
-                  // Aqui você pode adicionar navegação ou lógica de salvar a edição
-                  console.log("Edição confirmada");
+                  handleUpdate();
                 }}
               >
                 <Text className="text-white mr-1">Sim</Text>

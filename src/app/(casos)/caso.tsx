@@ -29,7 +29,10 @@ export default function CaseScreen() {
     { label: "Relatório", path: "/relatorio" },
     { label: "Editar Caso", path: "/editar" },
     { label: "Vítima", path: "/vitima" },
-    { label: "Evidência", path: "/evidenciadocaso" },
+    { label: "Evidência", path: {
+      pathname: "/evidenciadocaso",
+      params: { id: caso._id }
+    } },
   ];
 
   return (

@@ -14,7 +14,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Status } from "../../types/status";
 import { Picker } from "@react-native-picker/picker";
 import DateTimePicker from "@react-native-community/datetimepicker";
-import { Router, useRouter } from "expo-router";
+import { useRouter } from "expo-router";
 
 export default function CreateCaseScreen() {
   const [titulo, setTitulo] = useState("");
@@ -25,6 +25,7 @@ export default function CreateCaseScreen() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const route = useRouter()
+
   const onChange = (event: any, selectedDate?: Date) => {
     setShowPicker(false);
     if (selectedDate) {

@@ -95,29 +95,6 @@ export default function CriarEvidenciaScreen() {
       >
         <Ionicons name="add" size={28} color="white" />
       </TouchableOpacity>
-
-      {/* Bottom Tabs */}
-      <View className="flex-row justify-around bg-[#E4E9ED] py-3 absolute bottom-0 left-0 right-0">
-        <TouchableOpacity className="items-center">
-          <Ionicons name="bar-chart" size={24} color="#333" />
-          <Text className="text-xs mt-1">Dashboard</Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity className="items-center">
-          <Ionicons name="folder-open" size={24} color="#1B3A57" />
-          <Text className="text-xs mt-1 text-[#1B3A57] font-bold">Casos</Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity className="items-center">
-          <Ionicons name="people" size={24} color="#333" />
-          <Text className="text-xs mt-1">Funcionários</Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity className="items-center">
-          <Ionicons name="person-circle" size={26} color="#333" />
-          <Text className="text-xs mt-1">Perfil</Text>
-        </TouchableOpacity>
-      </View>
     </View>
   );
 }

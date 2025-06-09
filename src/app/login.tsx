@@ -3,6 +3,8 @@ import React, { useState } from "react";
 import { Text, TextInput, TouchableOpacity, View, Alert } from "react-native";
 import { useRouter } from "expo-router";
 import { useAuth } from "../context/AuthContext";
+import { formatCPF } from "../types/cpf";
+
 
 export default function Login() {
   const [cpf, setCpf] = useState("");
@@ -36,17 +38,19 @@ export default function Login() {
         <Text className="text-center text-xs">Faça o login para poder</Text>
         <Text className="text-center text-xs">acessar o sistema</Text>
         <View className="w-full m-10">
-          <View className="w-full mt-5">
-            <Text className="pl-6 pb-1 pt-2 text-sm font-bold text-black">
-              CPF
-            </Text>
+          <Text className="pl-6 pb-1 pt-2 text-sm font-bold text-periciumBlack">
+            CPF
+          </Text>
             <TextInput
               className="bg-gray-200 rounded px-3 h-10 mx-4 text-black"
               placeholder="Digite seu CPF"
               placeholderTextColor="#000"
               keyboardType="numeric"
-              value={cpf}
-              onChangeText={setCpf}
+              value={formatCPF(cpf)}
+              onChangeText={(text) => {
+                const cleaned = text.replace(/\D/g, "");
+                setCpf(cleaned)
+              }}
             />
             <Text className="pl-6 pb-1 pt-2 text-sm font-bold text-periciumBlack">
               Senha
@@ -70,6 +74,5 @@ export default function Login() {
           </View>
         </View>
       </View>
-    </View>
   );
 }
