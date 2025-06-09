@@ -17,7 +17,6 @@ import { CreateCaseDTO } from "../../interface/casoDTO";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 
-
 export default function CasosPericiais({ reloadKey }: { reloadKey: number }) {
   const [showNovo, setShowNovo] = useState(false);
   const [casos, setCasos] = useState<CreateCaseDTO[]>([]);
@@ -86,7 +85,6 @@ export default function CasosPericiais({ reloadKey }: { reloadKey: number }) {
     carregarCasos();
   }, [reloadKey]);
 
-
   return (
     <View className="flex-1 bg-[#F5F5F4] pt-12 px-4 relative">
       {/* Cabeçalho com logo fake */}
@@ -126,7 +124,6 @@ export default function CasosPericiais({ reloadKey }: { reloadKey: number }) {
             }`}
           >
             <Text
-
               className={`text-sm font-semibold ${
                 periodoSelecionado === periodo ? "text-white" : "text-black"
               }`}
@@ -143,33 +140,36 @@ export default function CasosPericiais({ reloadKey }: { reloadKey: number }) {
 
       <ScrollView>
         {casos.map((caso, index) => (
-          <View
-            key={index}
-
-            className="bg-[#D6DDE3] rounded-xl p-4 mb-4 relative border border-[#929292]"
-          >
-            <Text className="font-bold text-base">ID {caso._id}</Text>
-            <Text className="text-base font-bold">
-              Data: <Text className="text-base font-medium">{format(new Date(caso.dataAbertura), "dd/MM/yyyy 'às' HH:mm", { locale: ptBR })}</Text>
+          <Pressable onPress={() => handleOpencaso(caso._id || "")}>
+            <View
+              key={index}
+              className="bg-[#D6DDE3] rounded-xl p-4 mb-4 relative border border-[#929292]"
+            >
+              <Text className="font-bold text-base">ID {caso._id}</Text>
+              <Text className="text-base font-bold">
+                Data:{" "}
+                <Text className="text-base font-medium">
+                  {format(
+                    new Date(caso.dataAbertura),
+                    "dd/MM/yyyy 'às' HH:mm",
+                    { locale: ptBR }
+                  )}
+                </Text>
               </Text>
-            <Text className="text-base font-semibold">
-              Título: {caso.titulo}
-            </Text>
-            <View className="flex-row items-center mt-1">
-              <Text className="text-base">Status:</Text>
-              <Text className="ml-2 px-2 py-0.5 text-sm bg-white rounded">
-                {caso.status}
+              <Text className="text-base font-semibold">
+                Título: {caso.titulo}
               </Text>
-            </View>
-            <View className="flex-row justify-end mt-3">
-              <Pressable onPress={() => handleOpencaso(caso._id || "")}>
-                <Ionicons name="eye-outline" size={24} color="black" />
-              </Pressable>
-              <Pressable onPress={() => confirmarDeleteCaso(caso._id || "")}>
+              <View className="flex-row items-center mt-1">
+                <Text className="text-base">Status:</Text>
+                <Text className="ml-2 px-2 py-0.5 text-sm bg-white rounded">
+                  {caso.status}
+                </Text>
+              </View>
+              {/* <Pressable onPress={() => confirmarDeleteCaso(caso._id || "")}>
                 <Ionicons name="trash-outline" size={24} color="red" className= "ml-[278px]" />
-              </Pressable>
+                </Pressable> */}
             </View>
-          </View>
+          </Pressable>
         ))}
       </ScrollView>
 
@@ -178,7 +178,6 @@ export default function CasosPericiais({ reloadKey }: { reloadKey: number }) {
           className="bg-[#1B3A57] px-4 py-2 rounded-md absolute bottom-24 right-4 z-20"
           onPress={() => router.push("/novocaso")}
         >
-
           <Text className="text-white text-sm">Novo Caso</Text>
         </TouchableOpacity>
       )}

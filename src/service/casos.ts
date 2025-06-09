@@ -14,8 +14,6 @@
       dataAbertura: new Date (dados.dataAbertura).toISOString(), // <-- conversão aqui
     };
     
-    console.log("Dados enviados ao backend:", payload);
-    console.log("Dados enviados ao backend:", dados); // 
 
     const response = await api.post("/cases/createcase", payload, {
       headers: {

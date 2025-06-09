@@ -84,12 +84,6 @@ export default function CriarEvidenciaScreen() {
   const tirarFoto = async () => {
     const { status, canAskAgain } =
       await ImagePicker.requestCameraPermissionsAsync();
-    console.log(
-      "Status permissão:",
-      status,
-      "Pode perguntar de novo?",
-      canAskAgain
-    );
     if (status !== "granted") {
       alert("Permissão para acessar a câmera necessária!");
       return;
@@ -101,16 +95,18 @@ export default function CriarEvidenciaScreen() {
     const result = await ImagePicker.launchCameraAsync({
       allowsEditing: true,
       quality: 1,
+      skipBackup: true,
+      saveToPhotos: false
     });
 
-    console.log("Resultado da foto:", result);
+    
 
     if (!result.canceled && result.assets && result.assets.length > 0) {
       const uri = result.assets[0].uri;
-      console.log("URI da imagem tirada:", uri);
+    
       setImagem(uri);
     } else {
-      console.log("Usuário cancelou ou algo deu errado");
+     
     }
   };
 
