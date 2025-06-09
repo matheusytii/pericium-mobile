@@ -13,7 +13,8 @@ import { criarEvidencia } from "../../service/evidencia";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useLocalSearchParams } from "expo-router";
-
+import { useAuth } from "../../context/AuthContext";
+import { useRouter } from "expo-router";
 export default function CriarEvidenciaScreen() {
   const [title, setTitle] = useState("");
   const [dateRegister, setDateRegister] = useState<Date>(new Date());
@@ -27,7 +28,8 @@ export default function CriarEvidenciaScreen() {
   const [error, setError] = useState("");
   const [imagem, setImagem] = useState(null);
   const { caseId } = useLocalSearchParams();
-
+  const { isAuthenticated } = useAuth();
+  const route = useRouter()
   const onChange = (event: any, selectedDate?: Date) => {
     setShowPicker(false);
     if (selectedDate) {
@@ -80,10 +82,20 @@ export default function CriarEvidenciaScreen() {
   };
 
   const tirarFoto = async () => {
-    const { status } = await ImagePicker.requestCameraPermissionsAsync();
+    const { status, canAskAgain } =
+      await ImagePicker.requestCameraPermissionsAsync();
+    console.log(
+      "Status permissão:",
+      status,
+      "Pode perguntar de novo?",
+      canAskAgain
+    );
     if (status !== "granted") {
       alert("Permissão para acessar a câmera necessária!");
       return;
+    }
+    if (!canAskAgain) {
+      alert("Vá até as configurações do app e ative a permissão da câmera.");
     }
 
     const result = await ImagePicker.launchCameraAsync({
@@ -119,11 +131,7 @@ export default function CriarEvidenciaScreen() {
         Criar a Evidência
       </Text>
 
-      <ScrollView
-        className="bg-[#D6DDE3] rounded-xl p-4 mb-4"
-        contentContainerStyle={{ paddingBottom: 12 }}
-        style={{ maxHeight: 460 }} // <- reduz altura total do card
-      >
+      <ScrollView className="bg-[#D6DDE3] rounded-xl p-3 mb-4">
         {/* Imagem */}
         <View className="bg-gray-200 h-48 rounded-md mb-2 border-2 border-blue-400 items-center justify-center">
           {imagem ? (
@@ -210,9 +218,24 @@ export default function CriarEvidenciaScreen() {
           onChangeText={setDescricao}
         />
 
+        <View className="flex-row justify-between">
+          <TouchableOpacity
+            onPress={escolherImagem}
+            className="bg-[#1B3A57] px-3 py-2 rounded-md"
+          >
+            <Text className="text-white">Adicionar Imagem</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            onPress={tirarFoto}
+            className="bg-[#1B3A57] px-3 py-2 rounded-md"
+          >
+            <Text className="text-white">Tirar Foto</Text>
+          </TouchableOpacity>
+        </View>
         {/* Botões */}
         <View className="flex-row justify-between mt-2">
-          <TouchableOpacity className="bg-[#E4E9ED] px-4 py-2 rounded-md">
+          <TouchableOpacity className="bg-[#E4E9ED] px-4 py-2 rounded-md" onPress={() => route.back()}>
             <Text className="text-gray-800">Cancelar</Text>
           </TouchableOpacity>
 
@@ -225,37 +248,6 @@ export default function CriarEvidenciaScreen() {
           </TouchableOpacity>
         </View>
       </ScrollView>
-
-      <View className="flex-row justify-between mb-4">
-        <TouchableOpacity
-          onPress={escolherImagem}
-          className="bg-[#1B3A57] px-3 py-2 rounded-md"
-        >
-          <Text className="text-white">Adicionar Imagem</Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity
-          onPress={tirarFoto}
-          className="bg-[#1B3A57] px-3 py-2 rounded-md"
-        >
-          <Text className="text-white">Tirar Foto</Text>
-        </TouchableOpacity>
-      </View>
-
-      {/* Botão "Evidência" flutuante */}
-      {mostrarBotao && (
-        <TouchableOpacity className="bg-[#1B3A57] px-4 py-2 rounded-md absolute bottom-36 right-5 z-20">
-          <Text className="text-white text-sm">Evidência</Text>
-        </TouchableOpacity>
-      )}
-
-      {/* Botão + */}
-      <TouchableOpacity
-        onPress={() => setMostrarBotao(!mostrarBotao)}
-        className="bg-[#1B3A57] w-12 h-12 rounded-full items-center justify-center absolute bottom-20 right-5 z-10"
-      >
-        <Ionicons name="add" size={28} color="white" />
-      </TouchableOpacity>
     </View>
   );
 }

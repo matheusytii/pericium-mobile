@@ -1,7 +1,7 @@
 "use client";
 
 import { createContext, useContext, useEffect, useState } from "react";
-import { useRouter } from "expo-router";
+import { useRouter, usePathname } from "expo-router";
 import { login as loginService } from "../service/auth";
 import api from "../service/api";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -23,10 +23,10 @@ interface AuthContextType {
   user: User | null;
   isAuthenticated: boolean;
   loading: boolean;
+  restored: boolean;
   login: (cpf: string, password: string) => Promise<LoginResponse>;
   logout: () => void;
 }
-
 
 export const AuthContext = createContext<AuthContextType>(
   {} as AuthContextType
@@ -35,7 +35,10 @@ export const AuthContext = createContext<AuthContextType>(
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
+  const [restored, setRestored] = useState(false);
+
   const router = useRouter();
+  const pathname = usePathname();
 
   const persistUser = async (newUser: User) => {
     setUser(newUser);
@@ -43,38 +46,43 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   };
 
   useEffect(() => {
+    
+
     const loadData = async () => {
+
       try {
         const token = await AsyncStorage.getItem("token");
         const storedUser = await AsyncStorage.getItem("user");
 
+        console.log("[Auth] TOKEN:", token);
+        console.log("[Auth] USER:", storedUser);
+
         if (token) {
           api.defaults.headers.common["Authorization"] = `Bearer ${token}`;
-
           if (storedUser) {
-            const parsedUser = JSON.parse(storedUser);
-            setUser(parsedUser);
+            setUser(JSON.parse(storedUser));
+            console.log("[Auth] User restaurado via AsyncStorage.");
           } else {
-            try {
-              const res = await api.get("/auth/me");
-              await persistUser(res.data);
-            } catch (e) {
-              console.warn("Não foi possível recuperar o usuário automaticamente.");
-              // await logout(); 
-            }
+            const res = await api.get("/auth/me");
+            setUser(res.data);
+            console.log("[Auth] User restaurado via /auth/me.");
           }
         }
       } catch (e) {
-        console.error("Erro ao carregar dados de autenticação:", e);
+        console.error("[Auth] Erro ao restaurar:", e);
       } finally {
         setLoading(false);
+        console.log("[Auth] Finalizou restauração");
       }
     };
 
     loadData();
   }, []);
 
-  const login = async (cpf: string, password: string): Promise<LoginResponse> => {
+  const login = async (
+    cpf: string,
+    password: string
+  ): Promise<LoginResponse> => {
     try {
       const { access_token } = await loginService({ cpf, password });
 
@@ -84,12 +92,12 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
       const response = await api.get("/auth/me");
 
-     await AsyncStorage.setItem("user", JSON.stringify(response.data));
+      await AsyncStorage.setItem("user", JSON.stringify(response.data));
 
       setUser(response.data);
       router.push("/casospericiais");
 
-      return {access_token, user: response.data}
+      return { access_token, user: response.data };
     } catch (err) {
       throw err;
     }
@@ -105,7 +113,14 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
   return (
     <AuthContext.Provider
-      value={{ user, isAuthenticated: !!user, login, logout, loading }}
+      value={{
+        user,
+        isAuthenticated: !!user,
+        login,
+        logout,
+        loading,
+        restored,
+      }}
     >
       {!loading && children}
     </AuthContext.Provider>
