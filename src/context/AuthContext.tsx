@@ -37,30 +37,36 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [loading, setLoading] = useState(true);
   const router = useRouter();
 
+  const persistUser = async (newUser: User) => {
+    setUser(newUser);
+    await AsyncStorage.setItem("user", JSON.stringify(newUser));
+  };
+
   useEffect(() => {
     const loadData = async () => {
-      const token = await AsyncStorage.getItem("token");
-      const storedUser = await AsyncStorage.getItem("user");
+      try {
+        const token = await AsyncStorage.getItem("token");
+        const storedUser = await AsyncStorage.getItem("user");
 
-      if (token) {
-        api.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+        if (token) {
+          api.defaults.headers.common["Authorization"] = `Bearer ${token}`;
 
-        if (storedUser) {
-          const parsedUser = JSON.parse(storedUser);
-          setUser(parsedUser);
-          setLoading(false);
-        } else {
-          api
-            .get("/auth/me")
-            .then((res) => {
-            
-              setUser(res.data);
-              AsyncStorage.setItem("user", JSON.stringify(res.data));
-            })
-            .catch(() => logout())
-            .finally(() => setLoading(false));
+          if (storedUser) {
+            const parsedUser = JSON.parse(storedUser);
+            setUser(parsedUser);
+          } else {
+            try {
+              const res = await api.get("/auth/me");
+              await persistUser(res.data);
+            } catch (e) {
+              console.warn("Não foi possível recuperar o usuário automaticamente.");
+              // await logout(); 
+            }
+          }
         }
-      } else {
+      } catch (e) {
+        console.error("Erro ao carregar dados de autenticação:", e);
+      } finally {
         setLoading(false);
       }
     };

@@ -133,7 +133,7 @@ export default function EvidenciasDoCaso() {
       <View className="absolute bottom-16 right-5 items-end">
         {mostrarOpcoes && (
           <>
-            <TouchableOpacity className="bg-[#1B3A57] px-4 py-2 rounded-md mb-2 w-40 items-center" onPress={() => route.push("/criarevidencias")}>
+            <TouchableOpacity className="bg-[#1B3A57] px-4 py-2 rounded-md mb-2 w-40 items-center" onPress={() => route.push({ pathname: "/criarevidencias", params: { caseId: id } })}>
               <Text className="text-white font-medium">Novo evidência</Text>
             </TouchableOpacity>
           </>
