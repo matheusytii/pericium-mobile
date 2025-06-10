@@ -31,7 +31,10 @@ export default function CaseScreen() {
   const menuOptions = [
     { label: "Relatório", path: "/relatorio" },
     { label: "Editar Caso", path: "/editar" },
-    { label: "Vítima", path: "/vitima" },
+    { label: "Vítima", path: {
+      pathname: "/vitima",
+      params: {id: caso._id, caseTitulo: caso.titulo }
+    } },
     { label: "Evidência", path: {
       pathname: "/evidenciadocaso",
       params: { id: caso._id }

@@ -140,7 +140,7 @@ export default function CasosPericiais({ reloadKey }: { reloadKey: number }) {
 
       <ScrollView>
         {casos.map((caso, index) => (
-          <Pressable onPress={() => handleOpencaso(caso._id || "")}>
+          <Pressable key={caso._id} onPress={() => handleOpencaso(caso._id || "")}>
             <View
               key={index}
               className="bg-[#D6DDE3] rounded-xl p-4 mb-4 relative border border-[#929292]"

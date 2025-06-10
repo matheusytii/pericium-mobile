@@ -1,17 +1,8 @@
 import api from "./api";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { createvitimaDTO } from "../interface/vitimaDTO";
 
-export interface Vitima {
-  NIC: string;
-  nome: string;
-  genero: string;
-  documento: number;
-  endereco: string;
-  etnia: "BRANCO" | "PRETO" | "AMARELO" | "INDIGENA";
-  caseId: string;
-}
-
-export const criarVitima = async (dados: Vitima) => {
+export const criarVitima = async (dados: createvitimaDTO) => {
   const token = await AsyncStorage.getItem("token");
   if (!token) throw new Error("Token JWT não encontrado.");
 
@@ -41,7 +32,7 @@ export const getVitimaByCaseId = async (caseId: string) => {
   return response.data;
 };
 
-export const updateVitima = async (id: string, data: Partial<Vitima>) => {
+export const updateVitima = async (id: string, data: Partial<createvitimaDTO>) => {
   const token = await AsyncStorage.getItem("token");
   if (!token) throw new Error("Token JWT não encontrado.");
 

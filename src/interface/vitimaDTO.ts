@@ -1,10 +1,13 @@
+import { Etnia } from "../types/etnia";
+
 export interface createvitimaDTO {
-  NIC: string;
+  _id?: string
+  NIC?: string;
   nome: string;
   genero: string;
   documento: number;
   endereco: string;
-  etnia: "BRANCO" | "PRETO" | "AMARELO" | "INDIGENA";
+  etnia: Etnia;
   caseId: string;
 }
 
@@ -14,6 +17,6 @@ export interface updatevitimaDTO {
   genero?: string;
   documento?: number;
   endereco?: string;
-  etnia?: "BRANCO" | "PRETO" | "AMARELO" | "INDIGENA";
+  etnia?: Etnia;
   caseId?: string;
 } 

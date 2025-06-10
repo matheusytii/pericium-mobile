@@ -13,8 +13,8 @@ import { criarEvidencia } from "../../service/evidencia";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useLocalSearchParams } from "expo-router";
-import { useAuth } from "../../context/AuthContext";
 import { useRouter } from "expo-router";
+
 export default function CriarEvidenciaScreen() {
   const [title, setTitle] = useState("");
   const [dateRegister, setDateRegister] = useState<Date>(new Date());
@@ -28,7 +28,7 @@ export default function CriarEvidenciaScreen() {
   const [error, setError] = useState("");
   const [imagem, setImagem] = useState(null);
   const { caseId } = useLocalSearchParams();
-  const { isAuthenticated } = useAuth();
+  
   const route = useRouter()
   const onChange = (event: any, selectedDate?: Date) => {
     setShowPicker(false);
@@ -95,15 +95,10 @@ export default function CriarEvidenciaScreen() {
     const result = await ImagePicker.launchCameraAsync({
       allowsEditing: true,
       quality: 1,
-      skipBackup: true,
-      saveToPhotos: false
     });
-
-    
 
     if (!result.canceled && result.assets && result.assets.length > 0) {
       const uri = result.assets[0].uri;
-    
       setImagem(uri);
     } else {
      
