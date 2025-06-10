@@ -21,7 +21,7 @@ export default function CriarEvidenciaScreen() {
   const [local, setLocal] = useState("");
   const [tipo, setTipo] = useState("");
   const [imageFile, setImageFile] = useState<File | null>(null);
-  const [descricao, setDescricao] = useState("");
+  const [description, setDescription] = useState("");
   const [showPicker, setShowPicker] = useState(false);
   const [mostrarBotao, setMostrarBotao] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -38,7 +38,7 @@ export default function CriarEvidenciaScreen() {
   };
 
   const handleSubmit = async () => {
-    if (!title || !descricao || !tipo || !dateRegister) {
+    if (!title || !description || !tipo || !dateRegister) {
       setError("Preencha todos os campos obrigatoriamente");
       return;
     }
@@ -50,7 +50,7 @@ export default function CriarEvidenciaScreen() {
       const formData = new FormData();
 
       formData.append("title", title);
-      formData.append("descricao", descricao);
+      formData.append("description", description);
       formData.append("tipo", tipo);
       formData.append("local", local);
       formData.append("dateRegister", dateRegister.toISOString());
@@ -205,8 +205,8 @@ export default function CriarEvidenciaScreen() {
           multiline
           numberOfLines={4}
           className="bg-white rounded-md px-2 py-2 mt-1 mb-3 h-24 text-top"
-          value={descricao}
-          onChangeText={setDescricao}
+          value={description}
+          onChangeText={setDescription}
         />
 
         <View className="flex-row justify-between">

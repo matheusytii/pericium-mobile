@@ -30,7 +30,7 @@ export default function EditarEvidenciaScreen({
   const [local, setLocal] = useState("");
   const [tipo, setTipo] = useState("");
   const [peritoResponsavel, setPeritoResponsavel] = useState("");
-  const [descricao, setDescricao] = useState("");
+  const [description, setDescription] = useState("");
   const [modalVisivel, setModalVisivel] = useState(false);
   const [laudoId, setLaudoId] = useState<string | null>(null);
   const [assinado, setAssinado] = useState(false);
@@ -63,7 +63,7 @@ export default function EditarEvidenciaScreen({
           setTipo(data.tipo || "");
           setDateRegister(new Date(data.dateRegister));
           setLocal(data.local || "");
-          setDescricao(data.descricao);
+          setDescription(data.description);
         })
         .catch((error) => {
           console.error("Erro ao buscar evidência:", error);
@@ -82,7 +82,7 @@ export default function EditarEvidenciaScreen({
         local,
         tipo,
         peritoResponsavel,
-        descricao,
+        description,
       });
       Alert.alert("Evidência atualizada com sucesso.");
       route.push("/evidenciadocaso");
@@ -285,8 +285,8 @@ export default function EditarEvidenciaScreen({
               editarDescricao ? "bg-white" : "bg-gray-300"
             }`}
             multiline
-            value={descricao}
-            onChangeText={setDescricao}
+            value={description}
+            onChangeText={setDescription}
             editable={editarDescricao}
           />
         </View>

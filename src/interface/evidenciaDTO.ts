@@ -1,6 +1,6 @@
 export interface CreateEvidenciaDTO {
     title: string;
-    descricao: string;
+    description: string;
     tipo: string;
     local: string;
     dateRegister: string
@@ -15,6 +15,6 @@ export interface UpdateEvidenciaDTO {
     local?: string;
     tipo?: string;
     peritoResponsavel?: string;
-    descricao?: string;
+    description?: string;
     caseId: string
   }
