@@ -1,6 +1,5 @@
 import React from "react";
 import {
-  StyleSheet,
   FlatList,
   Text,
   TextInput,
@@ -8,40 +7,20 @@ import {
   View,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
+import { useState } from "react";
+import { useRouter, useLocalSearchParams } from "expo-router";
+import { odontogramaDTO } from "../../interface/odontograma";
 
 export default function odontogramas() {
-  const dados = [
-    {
-      id: "1",
-      numero: "1",
-      nome: "Incisivo Central",
-    },
-    {
-      id: "2",
-      numero: "9",
-      nome: "Primeiro Molar",
-    },
-    {
-      id: "3",
-      numero: "2",
-      nome: "Segundo Molar",
-    },
-    {
-      id: "4",
-      numero: "6",
-      nome: "Canino",
-    },
-    {
-      id: "5",
-      numero: "5",
-      nome: "Incisio Lateral",
-    },
-    {
-      id: "6",
-      numero: "5",
-      nome: "Incisio Lateral",
-    },
-  ];
+  const [odontogramas, setOdontogramas] = useState<odontogramaDTO[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [mostrarOpcoes, setMostrarOpcoes] = useState(false);
+
+  const router = useRouter();
+  const { idVitimas, vitimasNome } = useLocalSearchParams();
+
+  console.log("id", idVitimas, "nome da vitima", vitimasNome);
+
   return (
     <View className="flex-1 bg-[#F5F5F4]">
       <View className="items-center mb-4">
@@ -66,10 +45,14 @@ export default function odontogramas() {
         </View>
       </View>
       <View className="bg-gray-400 mt-2 mx-4 p-2 rounded-md">
-        <Text className="text-base font-bold text-black">ID da Vítima: </Text>
-        <Text className="text-base font-bold text-black">Nome da Vítima: </Text>
+        <Text className="text-base font-bold text-black">
+          ID da Vítima: {idVitimas}
+        </Text>
+        <Text className="text-base font-bold text-black">
+          Nome da Vítima: {vitimasNome}
+        </Text>
       </View>
-
+      {/* 
       <FlatList
         data={dados}
         keyExtractor={(item) => item.id}
@@ -100,7 +83,28 @@ export default function odontogramas() {
             </View>
           </View>
         )}
-      />
+      /> */}
+      <View className="absolute bottom-16 right-5 items-end">
+        {mostrarOpcoes && (
+          <TouchableOpacity
+            className="bg-[#1B3A57] px-4 py-2 rounded-md mb-2 w-40 items-center"
+            onPress={() =>
+              router.push({
+                pathname: "/novoOdontograma",
+                params: { id: idVitimas},
+              })
+            }
+          >
+            <Text className="text-white font-medium">Odontogramas</Text>
+          </TouchableOpacity>
+        )}
+        <TouchableOpacity
+          className="bg-[#1B3A57] w-14 h-14 rounded-full items-center justify-center"
+          onPress={() => setMostrarOpcoes(!mostrarOpcoes)}
+        >
+          <Ionicons name="add" size={28} color="white" />
+        </TouchableOpacity>
+      </View>
     </View>
   );
 }

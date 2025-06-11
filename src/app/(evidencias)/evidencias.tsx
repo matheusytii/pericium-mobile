@@ -9,16 +9,25 @@ import {
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { getEvidenciaById, updateEvidencia } from "../../service/evidencia";
-import { buscarLaudo, assinarLaudo } from "../../service/laudo";
+import {
+  buscarLaudo,
+  assinarLaudo,
+  criarLaudo,
+  getByPdf,
+} from "../../service/laudo";
 import { parseJwt } from "../../types/parseJWT";
 import { UpdateEvidenciaDTO } from "../../interface/evidenciaDTO";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import DateTimePicker from "@react-native-community/datetimepicker";
+import * as WebBrowser from "expo-web-browser";
 
 interface EditarEvidenciaProps {
   evidencia?: UpdateEvidenciaDTO;
   id?: string;
+}
+interface visualizarLaudo {
+  laudoId: string;
 }
 
 export default function EditarEvidenciaScreen({
@@ -43,6 +52,7 @@ export default function EditarEvidenciaScreen({
   const [editarTipo, setEditarTipo] = useState(false);
   const [editarDescricao, setEditarDescricao] = useState(false);
   const [editarData, setEditarData] = useState(false);
+  const [laudoGerado, setLaudoGerado] = useState(false);
   const { id } = useLocalSearchParams();
   const route = useRouter();
 
@@ -54,23 +64,67 @@ export default function EditarEvidenciaScreen({
   };
 
   useEffect(() => {
-    if (id) {
-  
-      getEvidenciaById(id as string)
-        .then((data) => {
-          setEvidencias(data);
-          setTitle(data.title || "");
-          setTipo(data.tipo || "");
-          setDateRegister(new Date(data.dateRegister));
-          setLocal(data.local || "");
-          setDescription(data.description);
-        })
-        .catch((error) => {
-          console.error("Erro ao buscar evidência:", error);
-          Alert.alert("Evidência não encontrada.");
-        });
-    }
+    const fetchData = async () => {
+      if (!id) return;
+
+      try {
+        const data = await getEvidenciaById(id as string);
+        setEvidencias(data);
+        setTitle(data.title || "");
+        setTipo(data.tipo || "");
+        setDateRegister(new Date(data.dateRegister));
+        setLocal(data.local || "");
+        setDescription(data.description);
+
+        try {
+          const laudo = await buscarLaudo(data._id);
+
+          if (laudo && laudo._id) {
+            setLaudoId(laudo._id);
+            setLaudoGerado(true); // <-- importante!
+            setSucessoAssinatura(laudo.assinado === true);
+          } else {
+            setLaudoGerado(false);
+          }
+        } catch (laudoErr: any) {
+          console.log("Nenhum laudo encontrado.");
+          setLaudoGerado(false);
+        }
+      } catch (err: any) {
+        console.error("Erro ao buscar evidência:", err);
+        Alert.alert(
+          "Evidência não encontrada",
+          err.response?.data?.message || "Erro desconhecido"
+        );
+      }
+    };
+
+    fetchData();
   }, [id]);
+
+  const gerarLaudo = async (evidenciaId: string) => {
+    if (!id) return null;
+
+    try {
+      await criarLaudo(evidenciaId);
+      Alert.alert(
+        "Laudo gerado com sucesso",
+        "O laudo foi gerado com sucesso."
+      );
+      setLaudoGerado(true);
+    } catch (error: any) {
+      console.error("Erro ao gerar laudo:", error);
+
+      let mensagem = "Erro ao gerar o laudo.";
+
+      if (error.response?.data?.message) {
+        const msg = error.response.data.message;
+        mensagem = typeof msg === "string" ? msg : JSON.stringify(msg);
+      }
+
+      Alert.alert("Erro", mensagem);
+    }
+  };
 
   const handleUpdate = async () => {
     if (!id) return null;
@@ -97,6 +151,7 @@ export default function EditarEvidenciaScreen({
           if (laudo.length > 0) {
             const primeiroLaudo = laudo[0];
             setLaudoId(primeiroLaudo._id);
+            setLaudoGerado(true);
 
             if (primeiroLaudo.assinado === true) {
               setSucessoAssinatura(true);
@@ -105,6 +160,7 @@ export default function EditarEvidenciaScreen({
             }
           } else {
             Alert.alert("Nenhum laudo encontrado para esta evidência.");
+            setLaudoGerado(false);
           }
         } catch (error) {
           console.error("Erro ao buscar laudo", error);
@@ -119,6 +175,7 @@ export default function EditarEvidenciaScreen({
       Alert.alert("Laudo não encontrado.");
       return;
     }
+
     const token = await AsyncStorage.getItem("token");
     let peritoId: string | null = null;
 
@@ -143,6 +200,7 @@ export default function EditarEvidenciaScreen({
       setAssinado(true);
 
       const response = await assinarLaudo(laudoId, peritoId);
+      console.log(response);
       if (response.status === 200) {
         setSucessoAssinatura(true);
         Alert.alert("Laudo assinado com sucesso.");
@@ -153,6 +211,18 @@ export default function EditarEvidenciaScreen({
       Alert.alert("Não foi possível assinar o laudo.");
     } finally {
       setAssinado(true);
+    }
+  };
+
+  const visualizarPdf = async (evidenciaId: string) => {
+    try {
+      const data = await getByPdf(evidenciaId);
+      const pdfUrl = data?.pdfUrl;
+
+      await WebBrowser.openBrowserAsync(pdfUrl);
+    } catch (error) {
+      console.error("Erro ao visualizar pdf", error);
+      Alert.alert("Erro ao visualizar PDF");
     }
   };
 
@@ -183,8 +253,7 @@ export default function EditarEvidenciaScreen({
         <View>
           <View className="flex-row gap-4">
             <Text className="font-bold text-base text-black">Título</Text>
-            <TouchableOpacity onPress={() => setEditarTitulo(!editarTitulo)}
-              >
+            <TouchableOpacity onPress={() => setEditarTitulo(!editarTitulo)}>
               <Ionicons
                 name="pencil"
                 size={20}
@@ -272,7 +341,9 @@ export default function EditarEvidenciaScreen({
         <View>
           <View className="flex-row gap-4">
             <Text className="font-bold text-base text-black">Descrição</Text>
-            <TouchableOpacity onPress={() => setEditarDescricao(!editarDescricao)}>
+            <TouchableOpacity
+              onPress={() => setEditarDescricao(!editarDescricao)}
+            >
               <Ionicons
                 name="pencil"
                 size={20}
@@ -362,9 +433,36 @@ export default function EditarEvidenciaScreen({
 
       {/* Menu flutuante do botão + */}
       {menuAberto && (
-        <View className="absolute right-5 bottom-44 z-20 w-32">
-          <TouchableOpacity className="bg-[#1B3A57] px-3 py-2 rounded-md shadow items-center">
-            <Text className="text-white text-sm font-medium">Gerar Laudo</Text>
+        <View className="absolute right-5 bottom-44 z-20 w-32 gap-2">
+          <TouchableOpacity
+            className={`px-3 py-2 rounded-md shadow items-center ${
+              laudoGerado ? "bg-gray-400" : "bg-[#1B3A57]"
+            }`}
+            disabled={laudoGerado}
+            onPress={() => gerarLaudo(id as string)}
+          >
+            <Text className="text-white text-sm font-medium">
+              {laudoGerado ? "Laudo Já Gerado" : "Gerar Laudo"}
+            </Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            className={`px-3 py-2 rounded-md shadow items-center ${
+              sucessoAssinatura ? "bg-gray-400" : "bg-[#1B3A57]"
+            }`}
+            disabled={sucessoAssinatura}
+            onPress={() => handleAssinatura()}
+          >
+            <Text className="text-white text-sm font-medium">
+              {sucessoAssinatura ? "Laudo Assinado" : "Assinar Laudo"}
+            </Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            className="bg-[#1B3A57] px-3 py-2 rounded-md shadow items-center"
+            onPress={() => visualizarPdf(id as string)}
+          >
+            <Text className="text-white text-sm font-medium">
+              Fazer Download do laudo
+            </Text>
           </TouchableOpacity>
         </View>
       )}

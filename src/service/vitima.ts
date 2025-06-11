@@ -32,6 +32,17 @@ export const getVitimaByCaseId = async (caseId: string) => {
   return response.data;
 };
 
+export const getVitimaById = async (id: string) => {
+  const token = await AsyncStorage.getItem("token");
+  
+  const response = await api.get(`/vitimas/${id}`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+  return response.data
+}
+
 export const updateVitima = async (id: string, data: Partial<createvitimaDTO>) => {
   const token = await AsyncStorage.getItem("token");
   if (!token) throw new Error("Token JWT não encontrado.");
