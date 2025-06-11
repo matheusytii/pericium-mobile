@@ -7,19 +7,43 @@ import {
   View,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter, useLocalSearchParams } from "expo-router";
 import { odontogramaDTO } from "../../interface/odontograma";
-
+import { getOdontogramabyVitima } from "../../service/odontograma";
+import { getVitimaById } from "../../service/vitima";
 export default function odontogramas() {
   const [odontogramas, setOdontogramas] = useState<odontogramaDTO[]>([]);
   const [loading, setLoading] = useState(true);
   const [mostrarOpcoes, setMostrarOpcoes] = useState(false);
+  const [vitimas, setVitimas] = useState("");
+
 
   const router = useRouter();
   const { idVitimas, vitimasNome } = useLocalSearchParams();
 
   console.log("id", idVitimas, "nome da vitima", vitimasNome);
+
+  useEffect(() => {
+    if (!idVitimas) {
+      return;
+    }
+    const fetchEvidencias = async () => {
+      try {
+        const [odontogramaData, vitimaData] = await Promise.all([
+          getOdontogramabyVitima(idVitimas as string),
+          getVitimaById(idVitimas as string),
+        ]);
+        setOdontogramas(odontogramaData);
+        setVitimas(vitimaData);
+      } catch (error) {
+        console.error("Erro na busca de evidências.", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchEvidencias();
+  }, [idVitimas]);
 
   return (
     <View className="flex-1 bg-[#F5F5F4]">
@@ -52,27 +76,27 @@ export default function odontogramas() {
           Nome da Vítima: {vitimasNome}
         </Text>
       </View>
-      {/* 
+      
       <FlatList
-        data={dados}
-        keyExtractor={(item) => item.id}
+        data={odontogramas}
+        keyExtractor={(item) => item._id!}
         renderItem={({ item }) => (
           <View className="bg-white p-4 mx-4 mt-3 rounded-xl border border-[#929292]">
             <View>
               <Text className="text-base text-black">
-                Número: {item.numero}
+                Número do dente: {item.dentes}
               </Text>
               <Text className="text-base font-bold text-black">
-                Nome: {item.nome}
+                Tipo do dente: {item.tipodente}
               </Text>
             </View>
             <View className="flex-row justify-end mt-3">
               <TouchableOpacity
-                onPress={() => console.log("Visualizar", item.id)}
+                onPress={() => console.log("Visualizar", item._id)}
               >
                 <Ionicons name="eye-outline" size={24} color="black" />
               </TouchableOpacity>
-              <TouchableOpacity onPress={() => console.log("Deletar", item.id)}>
+              <TouchableOpacity onPress={() => console.log("Deletar", item._id)}>
                 <Ionicons
                   name="trash-outline"
                   size={24}
@@ -83,7 +107,7 @@ export default function odontogramas() {
             </View>
           </View>
         )}
-      /> */}
+      />
       <View className="absolute bottom-16 right-5 items-end">
         {mostrarOpcoes && (
           <TouchableOpacity
@@ -91,7 +115,7 @@ export default function odontogramas() {
             onPress={() =>
               router.push({
                 pathname: "/novoOdontograma",
-                params: { id: idVitimas},
+                params: { id: idVitimas },
               })
             }
           >

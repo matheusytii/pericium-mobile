@@ -1,4 +1,5 @@
 export interface odontogramaDTO {
+  _id?: string
   dentes: string;
   observacao: string;
   tipodente: string;

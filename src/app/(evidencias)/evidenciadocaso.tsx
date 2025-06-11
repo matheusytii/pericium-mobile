@@ -10,7 +10,6 @@ import {
 import { Ionicons } from "@expo/vector-icons";
 import { UpdateEvidenciaDTO } from "../../interface/evidenciaDTO";
 import { deleteEvidencia, getEvidenciaByCaseId } from "../../service/evidencia";
-import { getByPdf } from "../../service/laudo";
 import { CreateCaseDTO } from "../../interface/casoDTO";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { getIdCaso } from "../../service/casos";
@@ -57,15 +56,6 @@ export default function EvidenciasDoCaso() {
     fetchEvidencias();
   }, [id]);
 
-  const visualizarPdf = async (laudoId: string) => {
-    try {
-      const data = await getByPdf(laudoId);
-      const pdfUrl = data.pdfUrl;
-      window.open(pdfUrl, "_blank");
-    } catch (error) {
-      console.error("Erro ao visualizar PDF: ", error);
-    }
-  };
 
   const handleDelete = async (id: string) => {
     if (confirm("Tem certeza que deseja deletar essa evidência?")) {
