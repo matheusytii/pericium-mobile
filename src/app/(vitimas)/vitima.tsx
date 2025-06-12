@@ -13,7 +13,8 @@ import { Ionicons } from "@expo/vector-icons";
 import { getVitimaByCaseId, deleteVitima } from "../../service/vitima";
 import { useRouter, useLocalSearchParams } from "expo-router";
 import { createvitimaDTO } from "../../interface/vitimaDTO";
-
+import { useFocusEffect } from "expo-router"; 
+import { useCallback } from "react";
 export default function Vitimas() {
   const [vitimas, setVitimas] = useState<createvitimaDTO[]>([]);
   const [loading, setLoading] = useState(true);
@@ -22,20 +23,23 @@ export default function Vitimas() {
   const router = useRouter();
   const { id, caseTitulo } = useLocalSearchParams();
 
-  useEffect(() => {
-    const carregarVitimas = async () => {
-      try {
-        const dados = await getVitimaByCaseId(id as string);
-        setVitimas(dados);
-      } catch (error) {
-        console.error("Erro ao carregar vítimas:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
+  useFocusEffect(
+    useCallback(() => {
+      const carregarVitimas = async () => {
+        try {
+          setLoading(true);
+          const dados = await getVitimaByCaseId(id as string);
+          setVitimas(dados);
+        } catch (error) {
+          console.error("Erro ao carregar vítimas:", error);
+        } finally {
+          setLoading(false);
+        }
+      };
 
-    carregarVitimas();
-  }, [id]);
+      carregarVitimas();
+    }, [id])
+  );
 
   const handleDelete = async (vitimaId: string) => {
     Alert.alert("Confirmar", "Deseja realmente excluir esta vítima?", [
@@ -63,7 +67,9 @@ export default function Vitimas() {
       <View className="items-center mb-3">
         <View className="flex-row items-center">
           <Ionicons name="shield-checkmark" size={24} color="#1B3A57" />
-          <Text className="text-[#1B3A57] text-xl font-bold ml-2">Pericium</Text>
+          <Text className="text-[#1B3A57] text-xl font-bold ml-2">
+            Pericium
+          </Text>
         </View>
       </View>
       <Text className="text-left text-3xl font-bold ml-6 mt-8">Vítimas</Text>
@@ -82,7 +88,7 @@ export default function Vitimas() {
       <View className="bg-gray-400 mt-2 mx-4 p-2 rounded-md">
         <Text className="text-base font-bold text-black">ID do Caso: {id}</Text>
         <Text className="text-base font-bold text-black">
-          Título do Caso: {caseTitulo}
+          Título do Caso: {caseTitulo?.titulo ??  "carregando..."}
         </Text>
       </View>
 

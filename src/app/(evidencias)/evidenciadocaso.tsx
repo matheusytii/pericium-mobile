@@ -15,6 +15,8 @@ import { useLocalSearchParams, useRouter } from "expo-router";
 import { getIdCaso } from "../../service/casos";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
+import { useFocusEffect } from "@react-navigation/native";
+import { useCallback } from "react";
 
 export interface visualizarLaudo {
   laudoId: string;
@@ -35,27 +37,26 @@ export default function EvidenciasDoCaso() {
   const { id } = useLocalSearchParams();
   const route = useRouter();
 
-  useEffect(() => {
-    if (!id) {
-      return;
-    }
-    const fetchEvidencias = async () => {
-      try {
-        const [evidenciaData, casoData] = await Promise.all([
-          getEvidenciaByCaseId(id as string),
-          getIdCaso(id as string),
-        ]);
-        setEvidencias(evidenciaData);
-        setCaso(casoData);
-      } catch (error) {
-        console.error("Erro na busca de evidências.", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchEvidencias();
-  }, [id]);
+  useFocusEffect(
+    useCallback(() => {
+      const fetchEvidencias = async () => {
+        try {
+          const [evidenciaData, casoData] = await Promise.all([
+            getEvidenciaByCaseId(id as string),
+            getIdCaso(id as string),
+          ]);
+          setEvidencias(evidenciaData);
+          setCaso(casoData);
+        } catch (error) {
+          console.error("Erro na busca de evidências.", error);
+        } finally {
+          setLoading(false);
+        }
+      };
 
+      fetchEvidencias();
+    }, [id])
+  );
 
   const handleDelete = async (id: string) => {
     if (confirm("Tem certeza que deseja deletar essa evidência?")) {
@@ -99,7 +100,7 @@ export default function EvidenciasDoCaso() {
       <View className="bg-[#CBD5E1] px-4 py-4 rounded-md mb-3">
         <Text className="text-2xs font-bold">ID {id}</Text>
         <Text className="text-2xs text-black font-medium">
-          Titulo do caso: {caso?.titulo || "Carregando..."}
+          Titulo do caso: {caso!.titulo || "Carregando..."}
         </Text>
       </View>
 

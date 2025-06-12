@@ -62,8 +62,11 @@ export default function CriarEvidenciaScreen() {
       } as any);
 
       await criarEvidencia(formData);
-
       alert("Evidência criada com sucesso!");
+      route.push({
+        pathname: "/evidenciadocaso",
+                params: { id: caseId },
+    })
     } catch (error) {
       setError("Erro ao criar evidência");
       console.error(error);

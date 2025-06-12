@@ -25,7 +25,7 @@ export default function novaVitima() {
   const [etnia, setEtnia] = useState<Etnia>(Etnia.PRETO);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
-  const { id, caseId } = useLocalSearchParams();
+  const { id, caseId, tituloDoCaso } = useLocalSearchParams();
   const route = useRouter();
 
   const handleSubmit = async () => {
@@ -37,13 +37,13 @@ export default function novaVitima() {
         NIC,
         nome,
         genero,
-        documento: Number(documento),
+        documento,
         endereco,
         etnia,
         caseId: caseId as string,
       });
       Alert.alert("Vitima criada com sucesso!");
-      route.push("/vitima");
+      route.push({pathname: "/vitima", params: {id: caseId, caseTitulo: tituloDoCaso}});
     } catch (error) {
       console.error("Erro ao criar Vitima");
     } finally {
@@ -100,6 +100,7 @@ export default function novaVitima() {
             <TextInput
               className="bg-white rounded-md px-2 py-2"
               placeholder="Escreva aqui"
+              keyboardType="numeric"
               value={documento}
               onChangeText={setDocumento}
             />

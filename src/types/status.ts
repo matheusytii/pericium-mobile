@@ -1,1 +1,1 @@
-export type Status= "PENDENTE" | "EM ANDAMENTO" | "CONCLUIDO"
+export type Status= "PENDENTE" | "EM_ANDAMENTO" | "CONCLUIDO"

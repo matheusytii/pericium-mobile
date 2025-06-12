@@ -1,5 +1,4 @@
 import api from "./api";
-import { CreateLaudoDTO } from "../interface/laudoDTO";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export const criarLaudo =  async (evidenciaId: string) => {
@@ -10,7 +9,7 @@ export const criarLaudo =  async (evidenciaId: string) => {
           }
 
           
-          const response = await api.post(`/report/gerar/${evidenciaId}`, {}, {
+          const response = await api.post(`/laudo/gerar/${evidenciaId}`, {}, {
             headers: {
                 Authorization: `Bearer ${token}`
             }

@@ -24,7 +24,7 @@ export default function CreateCaseScreen() {
   const [descricao, setDescricao] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-  const route = useRouter()
+  const route = useRouter();
 
   const onChange = (event: any, selectedDate?: Date) => {
     setShowPicker(false);
@@ -32,6 +32,7 @@ export default function CreateCaseScreen() {
       setDataAbertura(selectedDate);
     }
   };
+
   const handleSubmit = async () => {
     setLoading(true);
     setError("");
@@ -44,7 +45,13 @@ export default function CreateCaseScreen() {
     }
     const decoded = parseJwt(token);
     const userId = decoded?.sub;
-
+    console.log("Payload a enviar:", {
+      titulo,
+      descricao,
+      status,
+      dataAbertura: dataAbertura.toISOString(),
+      userId,
+    });
     try {
       await criarCaso({
         titulo,
@@ -54,7 +61,7 @@ export default function CreateCaseScreen() {
         userId,
       });
       Alert.alert("Caso criado com sucesso!");
-      route.push("/casospericiais")
+      route.push("/casospericiais");
     } catch (error) {
       console.error("Erro ao criar caso:", error);
       Alert.alert("Erro", "Não foi possível criar o caso");
@@ -99,15 +106,15 @@ export default function CreateCaseScreen() {
         >
           <Text>{dataAbertura.toLocaleDateString()}</Text>
         </TouchableOpacity>
-          {showPicker && (
-            <DateTimePicker
-              value={dataAbertura}
-              mode="date"
-              display="default"
-              onChange={onChange}
-              maximumDate={new Date()}
-            />
-          )}
+        {showPicker && (
+          <DateTimePicker
+            value={dataAbertura}
+            mode="date"
+            display="default"
+            onChange={onChange}
+            maximumDate={new Date()}
+          />
+        )}
 
         {/* Descrição */}
         <Text className="font-bold mt-2">
