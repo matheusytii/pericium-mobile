@@ -1,3 +1,4 @@
+
 # Pericium Mobile
 Uma plataforma completa e segura para gestão de laudos periciais odontológicos, com acesso via Web e Mobile.
 Permite o registro, análise e identificação forense de forma centralizada, eficiente e moderna.
@@ -10,16 +11,19 @@ Este aplicativo foi desenvolvido para atender demandas da Odontologia Legal, ofe
 - Visualização de odontogramas.
 - Geração e gerenciamento de laudos periciais.
 - Integração com câmera para coleta de evidências visuais.
+
 - Acesso multiplataforma (Web e Mobile).
 
 ---
 ## Funcionalidades
 - Autenticação com JWT
+
 - Gerenciamento de vítimas e casos
 - Odontograma interativo
 - Captura e upload de evidências
 - Geração de laudos digitais
 - Interface moderna com Tailwind CSS
+
 - Compatível com dispositivos móveis (React Native + Expo)
 
 ---
@@ -46,11 +50,11 @@ src/ <br>
 
 ---
 ## Instalação
+
 1. Clone o repositório:
 ```bash
 git clone https://github.com/matheusytii/pericium-mobile
 ```
-
 ---
 
 2. Instale as dependências:
@@ -60,8 +64,23 @@ npm install
 --- 
 
 3. Inicie o app:
+
 ```bash
 npx expo start
 ```
 ---
-4. Baixe o Expo Go e escaneie o QR-Code gerava
+
+## 4. Baixe o Expo Go no celular <br>
+
+Escanei o QR-Code gerado e aguarde o carregamento da aplicação no seu celular <br>
+
+---
+## Colaboradores 
+#### Desenvolvedor Principal: <br>
+Allan Vitor Marques <br>
+#### Colaboradores: <br>
+- Antônio Vinícius
+- Douglas Lucas Filho
+- Heloisa Costa
+- Matheus Ramos
+---

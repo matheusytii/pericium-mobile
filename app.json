@@ -1,7 +1,8 @@
 {
   "expo": {
     "name": "periciumapp",
-    "slug": "periciumapp",
+    "slug": "pericium",
+    "scheme": "periciumapp",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -24,6 +25,15 @@
     },
     "web": {
       "favicon": "./assets/favicon.png"
-    }
+    },
+    "plugins": [
+      "expo-web-browser"
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "c7578a0f-f293-403f-9ee0-78137232eca0"
+      }
+    },
+    "owner": "allanvitorm"
   }
 }
