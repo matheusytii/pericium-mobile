@@ -10,7 +10,7 @@ export const criarLaudo =  async (evidenciaId: string) => {
           }
 
           
-          const response = await api.post(`/laudo/gerar/${evidenciaId}`, {}, {
+          const response = await api.post(`/report/gerar/${evidenciaId}`, {}, {
             headers: {
                 Authorization: `Bearer ${token}`
             }
