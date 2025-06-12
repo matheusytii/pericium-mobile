@@ -38,7 +38,7 @@ export default function NovaVitima() {
         NIC,
         nome,
         genero,
-        documento,
+        documento: Number(documento),
         endereco,
         etnia,
         caseId: caseId as string,
@@ -112,8 +112,6 @@ export default function NovaVitima() {
               keyboardType="numeric"
               value={documento}
               onChangeText={setDocumento}
-              keyboardType="numeric"
-              returnKeyType="done"
             />
 
             <Text className="font-bold ml-2 mt-4">

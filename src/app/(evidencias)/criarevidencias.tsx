@@ -65,7 +65,7 @@ export default function CriarEvidenciaScreen() {
 
       await criarEvidencia(formData);
       alert("Evidência criada com sucesso!");
-      route.push({
+      router.push({
         pathname: "/evidenciadocaso",
                 params: { id: caseId },
     })

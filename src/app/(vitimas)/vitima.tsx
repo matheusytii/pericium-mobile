@@ -88,7 +88,7 @@ export default function Vitimas() {
       <View className="bg-gray-400 mt-2 mx-4 p-2 rounded-md">
         <Text className="text-base font-bold text-black">ID do Caso: {id}</Text>
         <Text className="text-base font-bold text-black">
-          Título do Caso: {caseTitulo?.titulo ??  "carregando..."}
+          Título do Caso: {caseTitulo ||  "carregando..."}
         </Text>
       </View>
 

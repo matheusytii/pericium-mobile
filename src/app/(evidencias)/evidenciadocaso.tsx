@@ -100,7 +100,7 @@ export default function EvidenciasDoCaso() {
       <View className="bg-[#CBD5E1] px-4 py-4 rounded-md mb-3">
         <Text className="text-2xs font-bold">ID {id}</Text>
         <Text className="text-2xs text-black font-medium">
-          Titulo do caso: {caso!.titulo || "Carregando..."}
+          Titulo do caso: {caso?.titulo || "Carregando..."}
         </Text>
       </View>
 

@@ -16,6 +16,8 @@ import { useRouter, useLocalSearchParams } from "expo-router";
 import { updateVitima, getVitimaById } from "../../service/vitima";
 import { createvitimaDTO } from "../../interface/vitimaDTO";
 
+// ... (importações inalteradas)
+
 export default function EditarVitima() {
   const router = useRouter();
   const { id } = useLocalSearchParams();
@@ -67,7 +69,6 @@ export default function EditarVitima() {
     }
   };
 
-  // Faz o scroll para o campo descrição quando ele receber foco
   const onFocusDescricao = () => {
     setTimeout(() => {
       scrollViewRef.current?.scrollToEnd({ animated: true });
@@ -95,29 +96,30 @@ export default function EditarVitima() {
 
           <Text className="text-left text-2xl font-bold ml-2 mb-4">Editar Vítima</Text>
 
-          <View className="bg-[#B6C0C7] rounded-xl p-4">
-            {/* Outros inputs ... */}
-            
-            {/* Campo descrição */}
-            <View className="mb-4">
-              <Text className="font-bold ml-2">
-                Descrição
-                <Text className="text-red-600">*</Text>
-              </Text>
-              <TextInput
-                ref={descricaoInputRef}
-                className="bg-white rounded-md px-2 py-2 mt-1"
-                placeholder="Escreva aqui a descrição"
-                multiline
-                numberOfLines={5}
-                value={String(formData.descricao ?? "")}
-                onChangeText={(value) => handleChange("descricao" as any, value)}
-                onFocus={onFocusDescricao}
-                editable={!loading}
-                textAlignVertical="top" // para android deixar o texto no topo
-                returnKeyType="done"
-              />
-            </View>
+          <View className="bg-[#B6C0C7] rounded-xl p-4 mt-4 mb-4 mx-4">
+            {[
+              { label: "NIC", key: "NIC" },
+              { label: "Nome", key: "nome" },
+              {
+                label: "CPF",
+                key: "documento",
+                keyboardType: "numeric" as KeyboardTypeOptions,
+              },
+              { label: "Etnia/Raça", key: "etnia" },
+              { label: "Sexo", key: "genero" },
+              { label: "Endereço", key: "endereco" },
+            ].map(({ label, key, keyboardType }) => (
+              <View key={key} className="mb-3">
+                <Text className="font-bold ml-2">{label}</Text>
+                <TextInput
+                  className="bg-white rounded-md px-2 py-2 mt-1"
+                  placeholder="Escreva aqui"
+                  value={String(formData[key as keyof createvitimaDTO] || "")}
+                  onChangeText={(value) => handleChange(key as any, value)}
+                  keyboardType={keyboardType ?? "default"}
+                />
+              </View>
+            ))}
 
             <View className="flex-row justify-between mt-6">
               <TouchableOpacity
@@ -168,3 +170,4 @@ export default function EditarVitima() {
     </KeyboardAvoidingView>
   );
 }
+
