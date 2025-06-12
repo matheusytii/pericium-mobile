@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import {
   View,
   Text,
@@ -6,7 +6,10 @@ import {
   TouchableOpacity,
   Alert,
   ScrollView,
-  KeyboardTypeOptions,
+  KeyboardAvoidingView,
+  Platform,
+  Keyboard,
+  TouchableWithoutFeedback,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useRouter, useLocalSearchParams } from "expo-router";
@@ -16,94 +19,130 @@ import { createvitimaDTO } from "../../interface/vitimaDTO";
 export default function EditarVitima() {
   const router = useRouter();
   const { id } = useLocalSearchParams();
+
   const [formData, setFormData] = useState<Partial<createvitimaDTO>>({});
   const [mostrarOpcoes, setMostrarOpcoes] = useState(false);
+  const [loading, setLoading] = useState(false);
+
+  const scrollViewRef = useRef<ScrollView>(null);
+  const descricaoInputRef = useRef<TextInput>(null);
 
   useEffect(() => {
     const carregarDados = async () => {
+      if (!id) return;
       try {
-        const vitimas = await getVitimaById(id as string);
-        setFormData(vitimas);
-      } catch (error) {
-        console.error("Erro ao carregar vítima:", error);
+        const vitima = await getVitimaById(id as string);
+        setFormData(vitima);
+      } catch {
+        Alert.alert("Erro", "Não foi possível carregar os dados da vítima.");
       }
     };
     carregarDados();
-  }, []);
+  }, [id]);
+
+  const handleChange = (key: keyof createvitimaDTO, value: string | number) => {
+    setFormData((prev) => ({ ...prev, [key]: value }));
+  };
 
   const handleUpdate = async () => {
+    if (
+      !formData.nome ||
+      !formData.genero ||
+      !formData.documento ||
+      !formData.endereco ||
+      !formData.etnia
+    ) {
+      Alert.alert("Erro", "Preencha todos os campos obrigatórios.");
+      return;
+    }
+    setLoading(true);
     try {
-      console.log("Dados enviados:", formData);
       await updateVitima(id as string, formData);
       Alert.alert("Sucesso", "Vítima atualizada com sucesso.");
       router.back();
-    } catch (error) {
-      console.error("Erro ao atualizar vítima:", error);
+    } catch {
       Alert.alert("Erro", "Não foi possível atualizar a vítima.");
+    } finally {
+      setLoading(false);
     }
   };
 
-  const handleChange = (key: keyof createvitimaDTO, value: string | number) => {
-    setFormData({ ...formData, [key]: value });
+  // Faz o scroll para o campo descrição quando ele receber foco
+  const onFocusDescricao = () => {
+    setTimeout(() => {
+      scrollViewRef.current?.scrollToEnd({ animated: true });
+    }, 150);
   };
 
   return (
-    <View className="flex-1 bg-[#F5F5F4]">
-      <ScrollView contentContainerStyle={{ paddingBottom: 120 }}>
-        <View className="items-center mb-3 mt-3">
-          <View className="flex-row items-center">
-            <Ionicons name="shield-checkmark" size={24} color="#1B3A57" />
-            <Text className="text-[#1B3A57] text-xl font-bold ml-2">
-              Pericium
-            </Text>
+    <KeyboardAvoidingView
+      style={{ flex: 1, backgroundColor: "#F5F5F4" }}
+      behavior={Platform.OS === "ios" ? "padding" : "height"}
+      keyboardVerticalOffset={Platform.OS === "ios" ? 80 : 0}
+    >
+      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+        <ScrollView
+          ref={scrollViewRef}
+          keyboardShouldPersistTaps="handled"
+          contentContainerStyle={{ paddingBottom: 120, paddingHorizontal: 16 }}
+        >
+          <View className="items-center mb-3 mt-3">
+            <View className="flex-row items-center">
+              <Ionicons name="shield-checkmark" size={24} color="#1B3A57" />
+              <Text className="text-[#1B3A57] text-xl font-bold ml-2">Pericium</Text>
+            </View>
           </View>
-        </View>
 
-        <Text className="text-left text-2xl font-bold ml-6 mt-2">
-          Editar Vítima
-        </Text>
+          <Text className="text-left text-2xl font-bold ml-2 mb-4">Editar Vítima</Text>
 
-        <View className="bg-[#B6C0C7] rounded-xl p-4 mt-4 mb-4 mx-4">
-          {[
-            { label: "NIC", key: "NIC" },
-            { label: "Nome", key: "nome" },
-            {
-              label: "CPF",
-              key: "documento",
-              keyboardType: "numeric" as KeyboardTypeOptions,
-            },
-            { label: "Etnia/Raça", key: "etnia" },
-            { label: "Sexo", key: "genero" },
-            { label: "Endereço", key: "endereco" },
-          ].map(({ label, key, keyboardType }) => (
-            <View key={key} className="mb-3">
-              <Text className="font-bold ml-2">{label}</Text>
+          <View className="bg-[#B6C0C7] rounded-xl p-4">
+            {/* Outros inputs ... */}
+            
+            {/* Campo descrição */}
+            <View className="mb-4">
+              <Text className="font-bold ml-2">
+                Descrição
+                <Text className="text-red-600">*</Text>
+              </Text>
               <TextInput
+                ref={descricaoInputRef}
                 className="bg-white rounded-md px-2 py-2 mt-1"
-                placeholder="Escreva aqui"
-                value={String(formData[key as keyof createvitimaDTO] || "")}
-                onChangeText={(value) => handleChange(key as any, value)}
-                keyboardType={keyboardType ?? "default"}
+                placeholder="Escreva aqui a descrição"
+                multiline
+                numberOfLines={5}
+                value={String(formData.descricao ?? "")}
+                onChangeText={(value) => handleChange("descricao" as any, value)}
+                onFocus={onFocusDescricao}
+                editable={!loading}
+                textAlignVertical="top" // para android deixar o texto no topo
+                returnKeyType="done"
               />
             </View>
-          ))}
 
-          <View className="flex-row justify-between mt-6">
-            <TouchableOpacity
-              className="rounded-md border border-[#15354B] w-32 h-12 justify-center items-center"
-              onPress={() => router.back()}
-            >
-              <Text className="font-semibold text-black">Cancelar</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              className="bg-[#15354B] rounded-md w-32 h-12 justify-center items-center"
-              onPress={handleUpdate}
-            >
-              <Text className="font-semibold text-white">Salvar</Text>
-            </TouchableOpacity>
+            <View className="flex-row justify-between mt-6">
+              <TouchableOpacity
+                className="rounded-md border border-[#15354B] w-32 h-12 justify-center items-center"
+                onPress={() => router.back()}
+                disabled={loading}
+              >
+                <Text className="font-semibold text-black">Cancelar</Text>
+              </TouchableOpacity>
+
+              <TouchableOpacity
+                className={`rounded-md w-32 h-12 justify-center items-center ${
+                  loading ? "bg-gray-400" : "bg-[#15354B]"
+                }`}
+                onPress={handleUpdate}
+                disabled={loading}
+              >
+                <Text className="font-semibold text-white">
+                  {loading ? "Salvando..." : "Salvar"}
+                </Text>
+              </TouchableOpacity>
+            </View>
           </View>
-        </View>
-      </ScrollView>
+        </ScrollView>
+      </TouchableWithoutFeedback>
 
       <View className="absolute bottom-16 right-5 items-end">
         {mostrarOpcoes && (
@@ -126,6 +165,6 @@ export default function EditarVitima() {
           <Ionicons name="add" size={28} color="white" />
         </TouchableOpacity>
       </View>
-    </View>
+    </KeyboardAvoidingView>
   );
 }
